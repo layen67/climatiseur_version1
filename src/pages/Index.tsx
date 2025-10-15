@@ -124,7 +124,7 @@ const StepIndicator = ({ step, label, currentStep }: { step: number, label: stri
         <div className="flex flex-col items-center">
             <div className={cn(
                 "w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg shadow-lg border-2 border-white transition-all duration-300",
-                isCompleted ? "bg-green-500 text-white" : isActive ? "bg-blue-500 text-white animate-pulse-strong" : "bg-gray-300 text-gray-600"
+                isCompleted ? "bg-green-500 text-white" : isActive ? "bg-blue-500 text-white animate-pulse" : "bg-gray-300 text-gray-600"
             )}>
                 {isCompleted ? <Check className="w-6 h-6" /> : step}
             </div>
