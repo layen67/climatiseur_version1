@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { MadeWithDyad } from "@/components/made-with-dyad";
 import { cn } from "@/lib/utils";
-import { ChevronDown, Check, ArrowRight, ArrowLeft, Calculator, Bolt, Info, Euro, Gift, Download, Shield, Phone, Mail, MapPin, Clock, Home, Building, Wind, Ruler, Volume2, Wifi, Percent, University, MapPin as MapPinIcon, Ticket } from "lucide-react";
+import { ChevronDown, Check, ArrowRight, ArrowLeft, Calculator, Bolt, Info, Euro, Gift, Download, Shield, Phone, Mail, MapPin, Clock, Home, Building, Wind, Ruler, Volume2, Wifi, Percent, University, MapPin as MapPinIcon, Ticket, Leaf, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -495,7 +495,7 @@ const CalculatorSection = ({
                 totalAides: Math.round(totalAides),
                 finalCost: Math.round(finalCost),
                 savings: Math.round(savings),
-                eligibleEcoPTZ: eligibleForEcoPTZ
+                eligibleEcoPTZ: eligibleEcoPTZ
             };
 
             setCalculationData(results);
@@ -1145,7 +1145,7 @@ const ContactSection = () => {
                                 <Phone className="w-6 h-6 text-yellow-400 mr-4" />
                                 <div>
                                     <h3 className="font-bold">Téléphone</h3>
-                                    <p className="text-blue-200">01 23 45 67 89</p>
+                                    <p className="text-blue-200">01 23 45  67 89</p>
                                 </div>
                             </div>
                             <div className="flex items-center">
@@ -1683,9 +1683,6 @@ const PrimesSection = () => (
     </section>
 );
 
-const User = ({ className }: { className?: string }) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>;
-const Leaf = ({ className }: { className?: string }) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 21 2 22 2s-5.5 3.9-11 18z"/></svg>;
-
 // --- Composant Principal ---
 
 const Index = () => {
@@ -1700,6 +1697,13 @@ const Index = () => {
 
     const openContactModal = () => setIsModalOpen(true);
     const closeContactModal = () => setIsModalOpen(false);
+
+    // Placeholder pour les fonctions légales (comme dans le fichier PHP)
+    const showLegalMentions = () => alert('Mentions légales - Climatiseur.pro SAS - RCS Paris 123 456 789 - Capital 50 000€ - Siège social : 123 Avenue de la République, 75011 Paris');
+    const showPrivacyPolicy = () => alert('Politique de confidentialité - Vos données sont protégées conformément au RGPD - Droit d\'accès, rectification, opposition');
+    const showCGV = () => alert('Conditions Générales de Vente - Disponibles sur demande à contact@climatiseur.pro');
+    const showCookiesPolicy = () => alert('Politique Cookies - Nous utilisons des cookies essentiels au fonctionnement du site et des statistiques anonymes');
+
 
     return (
         <div className="min-h-screen flex flex-col pt-16">
