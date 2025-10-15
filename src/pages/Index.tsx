@@ -13,8 +13,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useDataSender } from "@/hooks/use-data-sender";
 import { showSuccess, showError, showLoading, dismissToast } from "@/utils/toast";
-import { FloatingSimulatorButton } from "@/components/FloatingSimulatorButton";
-import { AppHeader } from "@/components/AppHeader";
 
 // --- Constantes et Mappings ---
 
@@ -61,7 +59,6 @@ interface CalculationData {
     houseAge: string;
     propertyStatus: string;
     ownerType: string;
-    currentHeating: string; // Ajout du type manquant
     
     // Results
     equipmentCost: number;
@@ -82,12 +79,27 @@ interface CalculationData {
 
 // --- Composants réutilisables ---
 
-const Tooltip = ({ text }: { text: string }) => (
+const FloatingButton = ({ onClick }: { onClick: () => void }) => (
+    <Button
+        id="floatingSimulatorBtn"
+        onClick={onClick}
+        className="floating-simulator-btn bg-blue-600 text-white rounded-full px-6 py-4 shadow-lg hover:bg-blue-700 transition duration-300 flex items-center fixed bottom-8 left-8 z-50 animate-pulse"
+    >
+        <Calculator className="text-xl" />
+        <span className="ml-2 font-semibold hidden sm:inline">Simuler mon projet</span>
+        <div className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">
+            <Bolt size={12} />
+        </div>
+    </Button>
+);
+
+const Tooltip = ({ children, text }: { children: React.ReactNode, text: string }) => (
     <span className="tooltip ml-1 relative inline-block cursor-pointer">
         <Info className="text-blue-500 w-4 h-4 inline-block" />
         <span className="tooltiptext absolute bottom-[125%] left-1/2 -ml-[100px] w-[200px] bg-gray-800 text-white text-sm text-center rounded-md p-2 opacity-0 transition-opacity duration-300 invisible hover:visible">
             {text}
         </span>
+        {children}
     </span>
 );
 
@@ -95,9 +107,10 @@ const Marquee = () => (
     <div className="bg-blue-900 text-white py-2 overflow-hidden">
         <div className="marquee whitespace-nowrap overflow-hidden box-border">
             <span className="font-semibold inline-block pr-full animate-[marquee_20s_linear_infinite]">
-                🎯 <strong>DEVIS GRATUIT</strong> | Installation rapide par expert RGE | 
+                🎯 <strong>SPECIAL ÉTÉ 2025</strong> | Installation express sous 48h | 
                 💰 <strong>Jusqu'à 70% d'économies</strong> avec les aides de l'État | 
                 🌟 <strong>4.8/5</strong> basé sur 1 247 avis clients |
+                ⚡ <strong>Financement 0%</strong> disponible |
                 🏆 <strong>Certifié RGE</strong> - Installation garantie 5 ans
             </span>
         </div>
@@ -112,7 +125,7 @@ const StepIndicator = ({ step, label, currentStep }: { step: number, label: stri
         <div className="flex flex-col items-center">
             <div className={cn(
                 "w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg shadow-lg border-2 border-white transition-all duration-300",
-                isCompleted ? "bg-green-500 text-white" : isActive ? "bg-blue-500 text-white animate-pulse" : "bg-gray-300 text-gray-600"
+                isCompleted ? "bg-green-500 text-white" : isActive ? "bg-blue-500 text-white animate-pulse-strong" : "bg-gray-300 text-gray-600"
             )}>
                 {isCompleted ? <Check className="w-6 h-6" /> : step}
             </div>
@@ -124,33 +137,33 @@ const StepIndicator = ({ step, label, currentStep }: { step: number, label: stri
 const InstallationCard = ({ type, icon: Icon, title, description, price, details, selectedInstallationType, setSelectedInstallationType }: { type: string, icon: React.ElementType, title: string, description: string, price: string, details: string[], selectedInstallationType: string, setSelectedInstallationType: (type: string) => void }) => (
     <div 
         className={cn(
-            "installation-type border-2 border-gray-200 rounded-2xl p-4 sm:p-6 cursor-pointer hover:border-blue-500 hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white relative overflow-hidden group",
+            "installation-type border-2 border-gray-200 rounded-2xl p-6 cursor-pointer hover:border-blue-500 hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white relative overflow-hidden group",
             selectedInstallationType === type && "type-selected border-blue-600 shadow-2xl shadow-blue-200/50"
         )}
         onClick={() => setSelectedInstallationType(type)}
     >
         <div className="text-center relative z-10">
             <div className={cn(
-                "w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-md transition-colors duration-300",
+                "w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md transition-colors duration-300",
                 type === 'monosplit' ? 'bg-blue-100 group-hover:bg-blue-200' :
                 type === 'multisplit' ? 'bg-green-100 group-hover:bg-green-200' :
                 'bg-purple-100 group-hover:bg-purple-200'
             )}>
-                <Icon className={cn("w-6 h-6 sm:text-2xl", type === 'monosplit' ? 'text-blue-600' : type === 'multisplit' ? 'text-green-600' : 'text-purple-600')} />
+                <Icon className={cn("text-2xl", type === 'monosplit' ? 'text-blue-600' : type === 'multisplit' ? 'text-green-600' : 'text-purple-600')} />
             </div>
-            <h3 className="text-base sm:text-lg font-bold mb-1 sm:mb-2">{title}</h3>
-            <p className="text-gray-600 text-xs sm:text-sm mb-2 sm:mb-3">{description}</p>
+            <h3 className="text-lg font-bold mb-2">{title}</h3>
+            <p className="text-gray-600 text-sm mb-3">{description}</p>
             <div className={cn(
-                "text-white px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-xs sm:text-sm font-semibold inline-block mb-2",
+                "text-white px-3 py-1 rounded-full text-sm font-semibold inline-block mb-2",
                 type === 'monosplit' ? 'bg-blue-600' : type === 'multisplit' ? 'bg-green-600' : 'bg-purple-600'
             )}>{price}</div>
-            <div className="mt-1 text-xs text-gray-500 flex flex-col space-y-0.5 hidden sm:flex">
+            <div className="mt-2 text-xs text-gray-500 flex flex-col space-y-1">
                 {details.map((detail, index) => <div key={index}>{detail}</div>)}
             </div>
         </div>
         {(type === 'monosplit' || type === 'gainable') && (
             <div className={cn(
-                "absolute top-2 left-2 text-white text-xs px-2 py-0.5 rounded-full font-semibold",
+                "absolute top-4 left-4 text-white text-xs px-2 py-1 rounded-full font-semibold",
                 type === 'monosplit' ? 'bg-blue-500' : 'bg-purple-500'
             )}>
                 {type === 'monosplit' ? 'Le plus choisi' : 'Premium'}
@@ -160,6 +173,56 @@ const InstallationCard = ({ type, icon: Icon, title, description, price, details
 );
 
 // --- Composants de Section ---
+
+const Header = ({ scrollToSection }: { scrollToSection: (id: string) => void }) => {
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+    return (
+        <nav className="bg-white shadow-md fixed w-full top-0 z-50 border-b border-gray-100">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="flex justify-between items-center h-16">
+                    <div className="flex items-center">
+                        <Bolt className="text-blue-600 w-6 h-6 mr-2" />
+                        <span className="text-xl font-extrabold text-gray-900">Climatiseur.<span className="text-blue-600">pro</span></span>
+                    </div>
+                    <div className="hidden md:flex space-x-8 items-center">
+                        {["calculateur", "primes", "guide", "avis", "faq", "contact"].map(id => (
+                            <a key={id} href={`#${id}`} onClick={() => scrollToSection(id)} className="text-gray-700 hover:text-blue-600 transition duration-300 font-medium capitalize text-sm">
+                                {id === 'primes' ? 'Aides & Primes' : id === 'guide' ? "Guide d'achat" : id === 'avis' ? "Avis Clients" : id}
+                            </a>
+                        ))}
+                        <Button variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50 transition duration-300">
+                            <Phone className="w-4 h-4 mr-2" />
+                            01 23 45 67 89
+                        </Button>
+                    </div>
+                    <div className="flex items-center space-x-4 md:hidden">
+                        <Button variant="ghost" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-gray-700">
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={isMobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}></path></svg>
+                        </Button>
+                    </div>
+                </div>
+            </div>
+            {isMobileMenuOpen && (
+                <div id="mobile-menu" className="md:hidden bg-white shadow-lg w-full top-16 z-40">
+                    <div className="px-4 py-4 space-y-4">
+                        {["calculateur", "primes", "guide", "avis", "faq", "contact"].map(id => (
+                            <a key={id} href={`#${id}`} onClick={() => { scrollToSection(id); setIsMobileMenuOpen(false); }} className="block text-gray-700 hover:text-blue-600 transition duration-300 font-medium py-2 border-b border-gray-100 capitalize">
+                                {id === 'primes' ? 'Aides & Primes' : id === 'guide' ? "Guide d'achat" : id === 'avis' ? "Avis Clients" : id}
+                            </a>
+                        ))}
+                        <div className="pt-4 border-t border-gray-200">
+                            <div className="flex items-center text-gray-700">
+                                <Phone className="text-blue-500 w-4 h-4 mr-2" />
+                                <span className="font-medium">01 23 45 67 89</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </nav>
+    );
+};
 
 const HeroSection = ({ scrollToSection }: { scrollToSection: (id: string) => void }) => {
     const [stats, setStats] = useState({ calculated: 0, satisfied: 0 });
@@ -366,11 +429,11 @@ const CalculatorSection = ({
         houseAge: "moins15",
         propertyStatus: "residence_principale",
         ownerType: "occupant",
-        currentHeating: "electrique",
+        currentHeating: "electrique", // Ajout de la valeur manquante
     });
     const [errors, setErrors] = useState({ surface: "", department: "", income: "" });
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { id, value, type } = e.target;
         setFormData(prev => ({
             ...prev,
@@ -554,7 +617,7 @@ const CalculatorSection = ({
                 totalAides: Math.round(totalAides),
                 finalCost: Math.round(finalCost),
                 savings: Math.round(savings),
-                eligibleEcoPTZ: eligibleForEcoPTZ
+                eligibleEcoPTZ: eligibleEcoPTZ
             };
 
             setCalculationData(results);
@@ -578,11 +641,11 @@ const CalculatorSection = ({
                 <div className="flex justify-center mb-12">
                     <div className="flex items-center space-x-4">
                         <StepIndicator step={1} label="Installation" currentStep={currentStep} />
-                        <div className="w-20 h-2 bg-gray-200 rounded-full mt-[-20px] relative hidden sm:block">
+                        <div className="w-20 h-2 bg-gray-200 rounded-full mt-[-20px] relative">
                             <div className="h-full bg-blue-500 rounded-full transition-all duration-500" style={{ width: currentStep > 1 ? '100%' : '0%' }}></div>
                         </div>
                         <StepIndicator step={2} label="Logement" currentStep={currentStep} />
-                        <div className="w-20 h-2 bg-gray-200 rounded-full mt-[-20px] relative hidden sm:block">
+                        <div className="w-20 h-2 bg-gray-200 rounded-full mt-[-20px] relative">
                             <div className="h-full bg-blue-500 rounded-full transition-all duration-500" style={{ width: currentStep > 2 ? '100%' : '0%' }}></div>
                         </div>
                         <StepIndicator step={3} label="Aides" currentStep={currentStep} />
@@ -601,16 +664,15 @@ const CalculatorSection = ({
                     </div>
                 </div>
 
-                <div className="bg-white rounded-3xl shadow-2xl p-4 sm:p-8 border border-gray-100 relative overflow-hidden calculator-card">
+                <div className="bg-white rounded-3xl shadow-2xl p-8 border border-gray-100 relative overflow-hidden calculator-card">
                     {/* Étape 1: Type d'installation améliorée */}
                     <div id="step1" className={cn("step-content", currentStep !== 1 && "hidden")}>
                         <div className="text-center mb-8">
-                            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">Étape 1: Type d'installation</h2>
-                            <p className="text-gray-600 text-sm sm:text-base">Sélectionnez le type de climatisation qui correspond à vos besoins</p>
+                            <h2 className="text-2xl font-bold text-gray-800 mb-2">Étape 1: Type d'installation</h2>
+                            <p className="text-gray-600">Sélectionnez le type de climatisation qui correspond à vos besoins</p>
                         </div>
                         
-                        {/* Amélioration mobile: Utilisation de grid-cols-1 sur mobile, puis md:grid-cols-3 */}
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-8">
+                        <div className="grid md:grid-cols-3 gap-6 mb-8">
                             <InstallationCard 
                                 type="monosplit" 
                                 icon={Home} 
@@ -645,7 +707,7 @@ const CalculatorSection = ({
 
                         <div className="grid md:grid-cols-2 gap-6">
                             <div>
-                                <Label htmlFor="surface" className="flex items-center mb-2 text-sm">
+                                <Label htmlFor="surface" className="flex items-center mb-2">
                                     Surface à climatiser (m²) <span className="text-red-500 ml-1">*</span>
                                     <Tooltip text="Surface totale des pièces à climatiser. Pour une estimation précise, mesurez chaque pièce." />
                                 </Label>
@@ -660,13 +722,13 @@ const CalculatorSection = ({
                                     required
                                     className={cn(errors.surface && "invalid-field")}
                                 />
-                                {errors.surface && <p className="error-message text-xs text-red-500 mt-1">{errors.surface}</p>}
+                                {errors.surface && <p className="error-message">{errors.surface}</p>}
                                 <div className="text-xs text-gray-500 mt-1">
                                     <span>10m² minimum</span> - <span>500m² maximum</span>
                                 </div>
                             </div>
                             <div>
-                                <Label htmlFor="rooms" className="block mb-2 text-sm">Nombre de pièces à climatiser</Label>
+                                <Label htmlFor="rooms" className="block mb-2">Nombre de pièces à climatiser</Label>
                                 <Select onValueChange={(value) => handleSelectChange('rooms', value)} value={formData.rooms.toString()}>
                                     <SelectTrigger>
                                         <SelectValue placeholder="Sélectionnez le nombre de pièces" />
@@ -686,13 +748,13 @@ const CalculatorSection = ({
                     {/* Étape 2: Caractéristiques améliorée */}
                     <div id="step2" className={cn("step-content", currentStep !== 2 && "hidden")}>
                         <div className="text-center mb-8">
-                            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">Étape 2: Caractéristiques du logement</h2>
-                            <p className="text-gray-600 text-sm sm:text-base">Ces informations nous aident à affiner votre estimation</p>
+                            <h2 className="text-2xl font-bold text-gray-800 mb-2">Étape 2: Caractéristiques du logement</h2>
+                            <p className="text-gray-600">Ces informations nous aident à affiner votre estimation</p>
                         </div>
                         
                         <div className="grid md:grid-cols-2 gap-6 mb-6">
                             <div>
-                                <Label htmlFor="housingType" className="block mb-2 text-sm">Type de logement</Label>
+                                <Label htmlFor="housingType" className="block mb-2">Type de logement</Label>
                                 <Select onValueChange={(value) => handleSelectChange('housingType', value)} value={formData.housingType}>
                                     <SelectTrigger><SelectValue /></SelectTrigger>
                                     <SelectContent>
@@ -702,7 +764,7 @@ const CalculatorSection = ({
                                 </Select>
                             </div>
                             <div>
-                                <Label htmlFor="constructionYear" className="block mb-2 text-sm">Année de construction</Label>
+                                <Label htmlFor="constructionYear" className="block mb-2">Année de construction</Label>
                                 <Select onValueChange={(value) => handleSelectChange('constructionYear', value)} value={formData.constructionYear}>
                                     <SelectTrigger><SelectValue /></SelectTrigger>
                                     <SelectContent>
@@ -716,7 +778,7 @@ const CalculatorSection = ({
 
                         <div className="grid md:grid-cols-2 gap-6 mb-6">
                             <div>
-                                <Label htmlFor="insulation" className="flex items-center mb-2 text-sm">
+                                <Label htmlFor="insulation" className="flex items-center mb-2">
                                     Isolation
                                     <Tooltip text="Qualité de l'isolation de votre logement. Influence la puissance nécessaire." />
                                 </Label>
@@ -731,7 +793,7 @@ const CalculatorSection = ({
                                 </Select>
                             </div>
                             <div>
-                                <Label htmlFor="department" className="block mb-2 text-sm">Département <span className="text-red-500">*</span></Label>
+                                <Label htmlFor="department" className="block mb-2">Département <span className="text-red-500">*</span></Label>
                                 <Select onValueChange={(value) => handleSelectChange('department', value)} value={formData.department}>
                                     <SelectTrigger className={cn(errors.department && "invalid-field")}>
                                         <SelectValue placeholder="Sélectionnez votre département" />
@@ -744,7 +806,7 @@ const CalculatorSection = ({
                                         ))}
                                     </SelectContent>
                                 </Select>
-                                {errors.department && <p className="error-message text-xs text-red-500 mt-1">{errors.department}</p>}
+                                {errors.department && <p className="error-message">{errors.department}</p>}
                             </div>
                         </div>
 
@@ -758,7 +820,7 @@ const CalculatorSection = ({
                                         onCheckedChange={(checked) => handleCheckboxChange('reversible', !!checked)} 
                                         className="mr-3"
                                     />
-                                    <Label htmlFor="reversible" className="text-sm">Climatisation réversible (chaud/froid)</Label>
+                                    <Label htmlFor="reversible">Climatisation réversible (chaud/froid)</Label>
                                 </div>
                                 <div className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-blue-50 transition duration-300 cursor-pointer">
                                     <Checkbox 
@@ -767,7 +829,7 @@ const CalculatorSection = ({
                                         onCheckedChange={(checked) => handleCheckboxChange('wifi', !!checked)} 
                                         className="mr-3"
                                     />
-                                    <Label htmlFor="wifi" className="text-sm">Contrôle WiFi</Label>
+                                    <Label htmlFor="wifi">Contrôle WiFi</Label>
                                 </div>
                                 <div className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-blue-50 transition duration-300 cursor-pointer">
                                     <Checkbox 
@@ -776,7 +838,7 @@ const CalculatorSection = ({
                                         onCheckedChange={(checked) => handleCheckboxChange('inverter', !!checked)} 
                                         className="mr-3"
                                     />
-                                    <Label htmlFor="inverter" className="text-sm">Technologie Inverter</Label>
+                                    <Label htmlFor="inverter">Technologie Inverter</Label>
                                 </div>
                                 <div className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-blue-50 transition duration-300 cursor-pointer">
                                     <Checkbox 
@@ -785,7 +847,7 @@ const CalculatorSection = ({
                                         onCheckedChange={(checked) => handleCheckboxChange('installation', !!checked)} 
                                         className="mr-3"
                                     />
-                                    <Label htmlFor="installation" className="text-sm">Installation par professionnel RGE</Label>
+                                    <Label htmlFor="installation">Installation par professionnel RGE</Label>
                                 </div>
                             </div>
                         </div>
@@ -794,13 +856,13 @@ const CalculatorSection = ({
                     {/* Étape 3: Situation financière améliorée */}
                     <div id="step3" className={cn("step-content", currentStep !== 3 && "hidden")}>
                         <div className="text-center mb-8">
-                            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">Étape 3: Éligibilité aux aides</h2>
-                            <p className="text-gray-600 text-sm sm:text-base">Ces informations déterminent votre éligibilité aux aides financières</p>
+                            <h2 className="text-2xl font-bold text-gray-800 mb-2">Étape 3: Éligibilité aux aides</h2>
+                            <p className="text-gray-600">Ces informations déterminent votre éligibilité aux aides financières</p>
                         </div>
                         
                         <div className="grid md:grid-cols-2 gap-6 mb-6">
                             <div>
-                                <Label htmlFor="income" className="flex items-center mb-2 text-sm">
+                                <Label htmlFor="income" className="flex items-center mb-2">
                                     Revenu fiscal de référence (€) <span className="text-red-500 ml-1">*</span>
                                     <Tooltip text="Montant indiqué sur votre avis d'imposition. Détermine le montant des aides." />
                                 </Label>
@@ -813,10 +875,10 @@ const CalculatorSection = ({
                                     required
                                     className={cn(errors.income && "invalid-field")}
                                 />
-                                {errors.income && <p className="error-message text-xs text-red-500 mt-1">{errors.income}</p>}
+                                {errors.income && <p className="error-message">{errors.income}</p>}
                             </div>
                             <div>
-                                <Label htmlFor="householdSize" className="block mb-2 text-sm">Nombre de personnes dans le foyer</Label>
+                                <Label htmlFor="householdSize" className="block mb-2">Nombre de personnes dans le foyer</Label>
                                 <Select onValueChange={(value) => handleSelectChange('householdSize', value)} value={formData.householdSize}>
                                     <SelectTrigger><SelectValue /></SelectTrigger>
                                     <SelectContent>
@@ -832,7 +894,7 @@ const CalculatorSection = ({
 
                         <div className="grid md:grid-cols-2 gap-6 mb-6">
                             <div>
-                                <Label htmlFor="houseAge" className="block mb-2 text-sm">Âge du logement</Label>
+                                <Label htmlFor="houseAge" className="block mb-2">Âge du logement</Label>
                                 <Select onValueChange={(value) => handleSelectChange('houseAge', value)} value={formData.houseAge}>
                                     <SelectTrigger><SelectValue /></SelectTrigger>
                                     <SelectContent>
@@ -842,7 +904,7 @@ const CalculatorSection = ({
                                 </Select>
                             </div>
                             <div>
-                                <Label htmlFor="currentHeating" className="block mb-2 text-sm">Système de chauffage actuel</Label>
+                                <Label htmlFor="currentHeating" className="block mb-2">Système de chauffage actuel</Label>
                                 <Select onValueChange={(value) => handleSelectChange('currentHeating', value)} value={formData.currentHeating}>
                                     <SelectTrigger><SelectValue /></SelectTrigger>
                                     <SelectContent>
@@ -862,7 +924,7 @@ const CalculatorSection = ({
                             </h3>
                             <div className="grid md:grid-cols-2 gap-4">
                                 <div>
-                                    <Label htmlFor="propertyStatus" className="block mb-2 text-sm">Statut du logement</Label>
+                                    <Label htmlFor="propertyStatus" className="block mb-2">Statut du logement</Label>
                                     <Select onValueChange={(value) => handleSelectChange('propertyStatus', value)} value={formData.propertyStatus}>
                                         <SelectTrigger><SelectValue /></SelectTrigger>
                                         <SelectContent>
@@ -872,7 +934,7 @@ const CalculatorSection = ({
                                     </Select>
                                 </div>
                                 <div>
-                                    <Label htmlFor="ownerType" className="block mb-2 text-sm">Type de propriétaire</Label>
+                                    <Label htmlFor="ownerType" className="block mb-2">Type de propriétaire</Label>
                                     <Select onValueChange={(value) => handleSelectChange('ownerType', value)} value={formData.ownerType}>
                                         <SelectTrigger><SelectValue /></SelectTrigger>
                                         <SelectContent>
@@ -885,7 +947,7 @@ const CalculatorSection = ({
                         </div>
 
                         <div className="text-center">
-                            <Button onClick={calculateEstimate} className="w-full sm:w-auto bg-blue-600 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-blue-700 transition duration-300 transform hover:scale-105 shadow-lg">
+                            <Button onClick={calculateEstimate} className="bg-blue-600 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-blue-700 transition duration-300 transform hover:scale-105 shadow-lg">
                                 <Calculator className="w-5 h-5 mr-2" />Calculer mon devis
                             </Button>
                         </div>
@@ -897,17 +959,17 @@ const CalculatorSection = ({
                             id="prevBtn" 
                             onClick={previousStep} 
                             variant="secondary"
-                            className={cn("px-4 py-3 sm:px-6 font-semibold flex items-center", currentStep === 1 && "invisible")}
+                            className={cn("px-6 py-3 font-semibold flex items-center", currentStep === 1 && "invisible")}
                         >
                             <ArrowLeft className="w-4 h-4 mr-2" />Précédent
                         </Button>
-                        <div className="flex-1 text-center hidden sm:block">
+                        <div className="flex-1 text-center">
                             <div className="text-sm text-gray-500">Étape {currentStep} sur 3</div>
                         </div>
                         <Button 
                             id="nextBtn" 
                             onClick={currentStep === 3 ? calculateEstimate : nextStep} 
-                            className="bg-blue-600 text-white px-4 py-3 sm:px-6 font-semibold hover:bg-blue-700 transition duration-300 ml-auto flex items-center group"
+                            className="bg-blue-600 text-white px-6 py-3 font-semibold hover:bg-blue-700 transition duration-300 ml-auto flex items-center group"
                         >
                             <span>{currentStep === 3 ? "Calculer mon devis" : "Suivant"}</span>
                             {currentStep !== 3 && <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" />}
@@ -1058,7 +1120,7 @@ const ResultsSection = ({ data, openContactModal }: { data: CalculationData | nu
                         </Button>
                     </div>
                     <p className="text-sm mt-4 opacity-75 relative z-10">
-                        <Shield className="w-4 h-4 mr-1 inline-block" /> Un expert vous contactera sous 24h - Sans engagement
+                        <Shield className="w-4 h-4 mr-1 inline-block" />Un expert vous contactera sous 24h - Sans engagement
                     </p>
                 </div>
             </div>
@@ -1107,7 +1169,7 @@ const ContactSection = () => {
         contactConsent: false,
     });
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | React.ChangeEvent<HTMLSelectElement> | React.ChangeEvent<HTMLTextAreaElement>>) => {
         const { id, value } = e.target;
         setFormData(prev => ({ ...prev, [id]: value }));
     };
@@ -1367,9 +1429,9 @@ const GuideSection = () => (
                     </article>
                 </div>
             </div>
-        </div>
-    </section>
-);
+        </section>
+    );
+};
 
 const PrimesSection = () => (
     <section id="primes" className="py-16 bg-white">
@@ -1653,7 +1715,7 @@ const Index = () => {
     return (
         <div className="min-h-screen flex flex-col pt-16">
             <Marquee />
-            <AppHeader scrollToSection={scrollToSection} />
+            <Header scrollToSection={scrollToSection} />
             
             <main className="flex-grow">
                 <HeroSection scrollToSection={scrollToSection} />
@@ -1678,7 +1740,7 @@ const Index = () => {
 
             <Footer />
             <MadeWithDyad />
-            <FloatingSimulatorButton onClick={() => scrollToSection('calculateur')} />
+            <FloatingButton onClick={() => scrollToSection('calculateur')} />
             <QuickContactModal isOpen={isModalOpen} onClose={closeContactModal} calculationData={calculationData} />
         </div>
     );
