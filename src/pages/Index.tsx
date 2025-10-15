@@ -8,13 +8,64 @@ import { useDataSender } from "@/hooks/use-data-sender";
 import { showSuccess, showError, showLoading, dismissToast } from "@/utils/toast";
 
 // --- UI Components ---
-import { Button } from "@/components/ui/button";
+// Remplacement de l'importation de shadcn/ui Button par une implémentation locale
+// import { Button } from "@/components/ui/button"; 
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+
+// Définition locale du composant Button pour résoudre l'erreur de référence
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+    variant?: 'default' | 'secondary' | 'outline';
+    isLoading?: boolean;
+}
+
+const Button: React.FC<ButtonProps> = ({ children, onClick, className = "", variant = 'default', disabled, isLoading, ...props }) => {
+    let baseClasses = "px-4 py-2 rounded-lg font-semibold transition duration-300 flex items-center justify-center";
+    let variantClasses = "";
+
+    switch (variant) {
+        case 'secondary':
+            variantClasses = "bg-gray-200 text-gray-800 hover:bg-gray-300";
+            break;
+        case 'outline':
+            variantClasses = "bg-transparent border border-gray-300 text-gray-800 hover:bg-gray-100";
+            break;
+        case 'default':
+        default:
+            // Note: Les classes spécifiques (comme bg-blue-600) sont souvent passées via className dans l'usage
+            // Nous utilisons une couleur par défaut si aucune classe n'est fournie, mais nous priorisons className
+            if (!className.includes('bg-')) {
+                variantClasses = "bg-blue-600 text-white hover:bg-blue-700";
+            }
+            break;
+    }
+
+    return (
+        <button
+            onClick={onClick}
+            className={cn(baseClasses, variantClasses, className, (disabled || isLoading) && "opacity-50 cursor-not-allowed")}
+            disabled={disabled || isLoading}
+            {...props}
+        >
+            {isLoading ? (
+                <span className="flex items-center">
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Chargement...
+                </span>
+            ) : (
+                children
+            )}
+        </button>
+    );
+};
+
 
 // --- Constantes et Mappings ---
 
@@ -144,7 +195,7 @@ const Header = ({ scrollToSection }: { scrollToSection: (id: string) => void }) 
                             <span>01 23 45 67 89</span>
                         </div>
                         <div className="md:hidden">
-                            <Button variant="ghost" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-gray-700">
+                            <Button variant="secondary" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-gray-700 bg-transparent hover:bg-gray-100">
                                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={isMobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}></path></svg>
                             </Button>
                         </div>
@@ -478,7 +529,7 @@ const CalculatorSection = ({
             
             const totalAides = maprime + cee + tvaReduced;
             const finalCost = Math.max(0, totalTTC - totalAides);
-            const savings = totalTTC - finalCost;
+            const savings = totalTTC - finalAides;
 
             const results: CalculationData = {
                 ...formData,
