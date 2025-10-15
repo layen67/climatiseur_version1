@@ -1367,9 +1367,9 @@ const GuideSection = () => (
                     </article>
                 </div>
             </div>
-        </section>
-    );
-};
+        </div>
+    </section>
+);
 
 const PrimesSection = () => (
     <section id="primes" className="py-16 bg-white">
