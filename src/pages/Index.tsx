@@ -94,8 +94,6 @@ const FloatingButton = ({ onClick }: { onClick: () => void }) => (
     </Button>
 );
 
-// Correction 3, 6, 7, 8, 9, 10, 11: Rendre children optionnel ou le supprimer si non utilisé.
-// Puisque Tooltip est utilisé comme un élément auto-fermé, nous supprimons `children` de l'interface.
 const Tooltip = ({ text }: { text: string }) => (
     <span className="tooltip ml-1 relative inline-block cursor-pointer">
         <Info className="text-blue-500 w-4 h-4 inline-block" />
@@ -435,7 +433,6 @@ const CalculatorSection = ({
     });
     const [errors, setErrors] = useState({ surface: "", department: "", income: "" });
 
-    // Correction 12, 13, 14: Simplification du typage des événements de formulaire
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { id, value, type } = e.target;
         setFormData(prev => ({
@@ -513,7 +510,6 @@ const CalculatorSection = ({
 
         // Simulation de calcul
         setTimeout(() => {
-            // Correction 4: toastId est de type string, pas de problème de type ici.
             dismissToast(toastId);
             
             const surface = formData.surface;
@@ -621,7 +617,6 @@ const CalculatorSection = ({
                 totalAides: Math.round(totalAides),
                 finalCost: Math.round(finalCost),
                 savings: Math.round(savings),
-                // Correction 5: Utiliser le nom de variable correct
                 eligibleEcoPTZ: eligibleForEcoPTZ
             };
 
@@ -1174,7 +1169,6 @@ const ContactSection = () => {
         contactConsent: false,
     });
 
-    // Correction 12, 13, 14: Simplification du typage des événements de formulaire
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { id, value } = e.target;
         setFormData(prev => ({ ...prev, [id]: value }));
@@ -1435,9 +1429,9 @@ const GuideSection = () => (
                     </article>
                 </div>
             </div>
-        </section>
-    );
-};
+        </div>
+    </section>
+);
 
 const PrimesSection = () => (
     <section id="primes" className="py-16 bg-white">
