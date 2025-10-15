@@ -1426,9 +1426,9 @@ const GuideSection = () => (
                     </article>
                 </div>
             </div>
-        </div>
-    </section>
-);
+        </section>
+    );
+};
 
 const PrimesSection = () => (
     <section id="primes" className="py-16 bg-white">
@@ -1617,9 +1617,81 @@ const QuickContactModal = ({ isOpen, onClose, calculationData }: { isOpen: boole
     );
 };
 
-const UserIcon = ({ className }: { className?: string }) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>;
-const LeafIcon = ({ className }: { className?: string }) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 21 2 22 2s-5.5 3.9-11 18z"/></svg>;
+const Footer = () => {
+    const showLegalMentions = () => alert('Mentions légales - Climatiseur.pro SAS - RCS Paris 123 456 789 - Capital 50 000€ - Siège social : 123 Avenue de la République, 75011 Paris');
+    const showPrivacyPolicy = () => alert('Politique de confidentialité - Vos données sont protégées conformément au RGPD - Droit d\'accès, rectification, opposition');
+    const showCGV = () => alert('Conditions Générales de Vente - Disponibles sur demande à contact@climatiseur.pro');
+    const showCookiesPolicy = () => alert('Politique Cookies - Nous utilisons des cookies essentiels au fonctionnement du site et des statistiques anonymes');
 
+    return (
+        <footer className="bg-gray-900 text-white py-12">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="grid md:grid-cols-5 gap-8 border-b border-gray-700 pb-8 mb-8">
+                    <div className="md:col-span-2">
+                        <div className="flex items-center mb-4">
+                            <Bolt className="text-blue-400 w-6 h-6 mr-2" />
+                            <span className="text-xl font-extrabold">Climatiseur.<span className="text-blue-400">pro</span></span>
+                        </div>
+                        <p className="text-gray-400 mb-4 text-sm">Votre expert en climatisation et optimisation des aides financières. Certifié RGE.</p>
+                        <div className="flex space-x-3">
+                            <div className="bg-white rounded-lg px-3 py-1">
+                                <div className="text-xs font-bold text-gray-800">RGE</div>
+                            </div>
+                            <div className="bg-white rounded-lg px-3 py-1">
+                                <div className="text-xs font-bold text-gray-800">QUALIBAT</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 className="font-bold mb-4 text-lg text-blue-400">Navigation</h4>
+                        <ul className="space-y-2 text-gray-400 text-sm">
+                            {["calculateur", "primes", "guide", "avis", "faq", "contact"].map(id => (
+                                <li key={id}><a href={`#${id}`} className="hover:text-white transition duration-300">{id.charAt(0).toUpperCase() + id.slice(1)}</a></li>
+                            ))}
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h4 className="font-bold mb-4 text-lg text-blue-400">Légal</h4>
+                        <ul className="space-y-2 text-gray-400 text-sm">
+                            <li><a href="#" onClick={showLegalMentions} className="hover:text-white transition duration-300">Mentions légales</a></li>
+                            <li><a href="#" onClick={showPrivacyPolicy} className="hover:text-white transition duration-300">Confidentialité</a></li>
+                            <li><a href="#" onClick={showCGV} className="hover:text-white transition duration-300">CGV</a></li>
+                            <li><a href="#" onClick={showCookiesPolicy} className="hover:text-white transition duration-300">Cookies</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h4 className="font-bold mb-4 text-lg text-blue-400">Contact</h4>
+                        <ul className="space-y-3 text-gray-400 text-sm">
+                            <li className="flex items-center">
+                                <Phone className="text-blue-400 w-4 h-4 mr-3" />
+                                <span>01 23 45 67 89</span>
+                            </li>
+                            <li className="flex items-center">
+                                <Mail className="text-blue-400 w-4 h-4 mr-3" />
+                                <span>contact@climatiseur.pro</span>
+                            </li >
+                            <li className="flex items-center">
+                                <Clock className="text-blue-400 w-4 h-4 mr-3" />
+                                <span>Lun-Ven: 8h-19h<br/>Sam: 9h-17h</span>
+                            </li>
+                            <li className="flex items-center">
+                                <MapPinIcon className="text-blue-400 w-4 h-4 mr-3" />
+                                <span>Intervention France entière</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div className="text-center text-gray-500 text-xs">
+                    <p>&copy; 2025 Climatiseur.pro - Tous droits réservés | SIRET: 123 456 789 00000 | RCS Paris</p>
+                </div>
+            </div>
+        </footer>
+    );
+};
 
 // --- Composant Principal ---
 
