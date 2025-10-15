@@ -1058,7 +1058,7 @@ const ResultsSection = ({ data, openContactModal }: { data: CalculationData | nu
                         </Button>
                     </div>
                     <p className="text-sm mt-4 opacity-75 relative z-10">
-                        <Shield className="w-4 h-4 mr-1 inline-block" />Un expert vous contactera sous 24h - Sans engagement
+                        <Shield className="w-4 h-4 mr-1 inline-block" /> Un expert vous contactera sous 24h - Sans engagement
                     </p>
                 </div>
             </div>
