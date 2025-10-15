@@ -77,7 +77,7 @@ interface CalculationData {
     eligibleEcoPTZ: boolean;
 }
 
-// --- Composants réutilisables ---
+// --- Composants réutilisables (Doivent être définis en premier) ---
 
 const FloatingButton = ({ onClick }: { onClick: () => void }) => (
     <Button
@@ -116,6 +116,63 @@ const Marquee = () => (
         </div>
     </div>
 );
+
+const StepIndicator = ({ step, label, currentStep }: { step: number, label: string, currentStep: number }) => {
+    const isActive = currentStep === step;
+    const isCompleted = currentStep > step;
+    
+    return (
+        <div className="flex flex-col items-center">
+            <div className={cn(
+                "w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg shadow-lg border-2 border-white transition-all duration-300",
+                isCompleted ? "bg-green-500 text-white" : isActive ? "bg-blue-500 text-white animate-pulse-strong" : "bg-gray-300 text-gray-600"
+            )}>
+                {isCompleted ? <Check className="w-6 h-6" /> : step}
+            </div>
+            <span className="text-xs mt-2 text-gray-600 font-medium">{label}</span>
+        </div>
+    );
+};
+
+const InstallationCard = ({ type, icon: Icon, title, description, price, details, selectedInstallationType, setSelectedInstallationType }: { type: string, icon: React.ElementType, title: string, description: string, price: string, details: string[], selectedInstallationType: string, setSelectedInstallationType: (type: string) => void }) => (
+    <div 
+        className={cn(
+            "installation-type border-2 border-gray-200 rounded-2xl p-6 cursor-pointer hover:border-blue-500 hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white relative overflow-hidden group",
+            selectedInstallationType === type && "type-selected border-blue-600 shadow-2xl shadow-blue-200/50"
+        )}
+        onClick={() => setSelectedInstallationType(type)}
+    >
+        <div className="text-center relative z-10">
+            <div className={cn(
+                "w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md transition-colors duration-300",
+                type === 'monosplit' ? 'bg-blue-100 group-hover:bg-blue-200' :
+                type === 'multisplit' ? 'bg-green-100 group-hover:bg-green-200' :
+                'bg-purple-100 group-hover:bg-purple-200'
+            )}>
+                <Icon className={cn("text-2xl", type === 'monosplit' ? 'text-blue-600' : type === 'multisplit' ? 'text-green-600' : 'text-purple-600')} />
+            </div>
+            <h3 className="text-lg font-bold mb-2">{title}</h3>
+            <p className="text-gray-600 text-sm mb-3">{description}</p>
+            <div className={cn(
+                "text-white px-3 py-1 rounded-full text-sm font-semibold inline-block mb-2",
+                type === 'monosplit' ? 'bg-blue-600' : type === 'multisplit' ? 'bg-green-600' : 'bg-purple-600'
+            )}>{price}</div>
+            <div className="mt-2 text-xs text-gray-500 flex flex-col space-y-1">
+                {details.map((detail, index) => <div key={index}>{detail}</div>)}
+            </div>
+        </div>
+        {(type === 'monosplit' || type === 'gainable') && (
+            <div className={cn(
+                "absolute top-4 left-4 text-white text-xs px-2 py-1 rounded-full font-semibold",
+                type === 'monosplit' ? 'bg-blue-500' : 'bg-purple-500'
+            )}>
+                {type === 'monosplit' ? 'Le plus choisi' : 'Premium'}
+            </div>
+        )}
+    </div>
+);
+
+// --- Composants de Section (Doivent être définis avant Index) ---
 
 const Header = ({ scrollToSection }: { scrollToSection: (id: string) => void }) => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -339,61 +396,6 @@ const WhyChooseUsSection = () => (
             </div>
         </div>
     </section>
-);
-
-const StepIndicator = ({ step, label, currentStep }: { step: number, label: string, currentStep: number }) => {
-    const isActive = currentStep === step;
-    const isCompleted = currentStep > step;
-    
-    return (
-        <div className="flex flex-col items-center">
-            <div className={cn(
-                "w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg shadow-lg border-2 border-white transition-all duration-300",
-                isCompleted ? "bg-green-500 text-white" : isActive ? "bg-blue-500 text-white animate-pulse-strong" : "bg-gray-300 text-gray-600"
-            )}>
-                {isCompleted ? <Check className="w-6 h-6" /> : step}
-            </div>
-            <span className="text-xs mt-2 text-gray-600 font-medium">{label}</span>
-        </div>
-    );
-};
-
-const InstallationCard = ({ type, icon: Icon, title, description, price, details, selectedInstallationType, setSelectedInstallationType }: { type: string, icon: React.ElementType, title: string, description: string, price: string, details: string[], selectedInstallationType: string, setSelectedInstallationType: (type: string) => void }) => (
-    <div 
-        className={cn(
-            "installation-type border-2 border-gray-200 rounded-2xl p-6 cursor-pointer hover:border-blue-500 hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white relative overflow-hidden group",
-            selectedInstallationType === type && "type-selected border-blue-600 shadow-2xl shadow-blue-200/50"
-        )}
-        onClick={() => setSelectedInstallationType(type)}
-    >
-        <div className="text-center relative z-10">
-            <div className={cn(
-                "w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md transition-colors duration-300",
-                type === 'monosplit' ? 'bg-blue-100 group-hover:bg-blue-200' :
-                type === 'multisplit' ? 'bg-green-100 group-hover:bg-green-200' :
-                'bg-purple-100 group-hover:bg-purple-200'
-            )}>
-                <Icon className={cn("text-2xl", type === 'monosplit' ? 'text-blue-600' : type === 'multisplit' ? 'text-green-600' : 'text-purple-600')} />
-            </div>
-            <h3 className="text-lg font-bold mb-2">{title}</h3>
-            <p className="text-gray-600 text-sm mb-3">{description}</p>
-            <div className={cn(
-                "text-white px-3 py-1 rounded-full text-sm font-semibold inline-block mb-2",
-                type === 'monosplit' ? 'bg-blue-600' : type === 'multisplit' ? 'bg-green-600' : 'bg-purple-600'
-            )}>{price}</div>
-            <div className="mt-2 text-xs text-gray-500 flex flex-col space-y-1">
-                {details.map((detail, index) => <div key={index}>{detail}</div>)}
-            </div>
-        </div>
-        {(type === 'monosplit' || type === 'gainable') && (
-            <div className={cn(
-                "absolute top-4 left-4 text-white text-xs px-2 py-1 rounded-full font-semibold",
-                type === 'monosplit' ? 'bg-blue-500' : 'bg-purple-500'
-            )}>
-                {type === 'monosplit' ? 'Le plus choisi' : 'Premium'}
-            </div>
-        )}
-    </div>
 );
 
 const CalculatorSection = ({ 
@@ -1501,6 +1503,382 @@ const PrimesSection = () => (
     </section>
 );
 
+const FAQSection = () => {
+    const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+    const toggleFAQ = (index: number) => {
+        setOpenIndex(openIndex === index ? null : index);
+    };
+
+    return (
+        <section id="faq" className="py-16 bg-white">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 className="text-3xl font-bold text-center text-gray-800 mb-12">Questions fréquentes</h2>
+                
+                <div className="space-y-6">
+                    {FAQ_DATA.map((item, index) => (
+                        <div key={index} className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+                            <button className="flex justify-between items-center w-full text-left" onClick={() => toggleFAQ(index)}>
+                                <h3 className="text-lg font-semibold text-gray-800">{item.question}</h3>
+                                <ChevronDown className={cn("text-blue-600 transition-transform duration-300 w-5 h-5", openIndex === index && "rotate-180")} />
+                            </button>
+                            <div className={cn("mt-4 text-gray-600 transition-all duration-300 overflow-hidden", openIndex === index ? "max-h-96" : "max-h-0")}>
+                                <p>{item.answer}</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </section>
+    );
+};
+
+const ContactSection = () => {
+    const { sendData, isLoading } = useDataSender();
+    const [formData, setFormData] = useState({
+        contactName: "",
+        contactPhone: "",
+        contactEmail: "",
+        contactDepartment: "placeholder",
+        contactMessage: "",
+        contactConsent: false,
+    });
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | React.ChangeEvent<HTMLSelectElement> | React.ChangeEvent<HTMLTextAreaElement>>) => {
+        const { id, value } = e.target;
+        setFormData(prev => ({ ...prev, [id]: value }));
+    };
+
+    const handleSelectChange = (value: string) => {
+        setFormData(prev => ({ ...prev, contactDepartment: value }));
+    };
+
+    const handleConsentChange = (checked: boolean) => {
+        setFormData(prev => ({ ...prev, contactConsent: checked }));
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!formData.contactConsent) {
+            showError("Veuillez accepter d'être contacté.");
+            return;
+        }
+        if (formData.contactDepartment === 'placeholder') {
+            showError("Veuillez sélectionner votre département.");
+            return;
+        }
+
+        const success = await sendData(formData, 'contact');
+        if (success) {
+            setFormData({
+                contactName: "",
+                contactPhone: "",
+                contactEmail: "",
+                contactDepartment: "placeholder",
+                contactMessage: "",
+                contactConsent: false,
+            });
+        }
+    };
+
+    return (
+        <section id="contact" className="py-16 bg-blue-900 text-white">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="text-center mb-12">
+                    <h2 className="text-3xl font-bold mb-4">Contactez nos experts</h2>
+                    <p className="text-xl text-blue-200">Une question ? Un projet ? Nos conseillers vous répondent sous 24h</p>
+                </div>
+                
+                <div className="grid md:grid-cols-2 gap-12">
+                    <div>
+                        <h2 className="text-3xl font-bold mb-6">Contactez nos experts</h2>
+                        <p className="text-xl mb-8 text-blue-200">Nos conseillers vous accompagnent dans votre projet et optimisent vos aides financières</p>
+                        
+                        <div className="space-y-6">
+                            <div className="flex items-center">
+                                <Phone className="w-6 h-6 text-yellow-400 mr-4" />
+                                <div>
+                                    <h3 className="font-bold">Téléphone</h3>
+                                    <p className="text-blue-200">01 23 45  67 89</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center">
+                                <Mail className="w-6 h-6 text-yellow-400 mr-4" />
+                                <div>
+                                    <h3 className="font-bold">Email</h3>
+                                    <p className="text-blue-200">contact@climatiseur.pro</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center">
+                                <MapPin className="w-6 h-6 text-yellow-400 mr-4" />
+                                <div>
+                                    <h3 className="font-bold">Zone d'intervention</h3>
+                                    <p className="text-blue-200">France entière</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center">
+                                <Clock className="w-6 h-6 text-yellow-400 mr-4" />
+                                <div>
+                                    <h3 className="font-bold">Horaires</h3>
+                                    <p className="text-blue-200">Lun-Ven: 8h-19h • Sam: 9h-17h</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="bg-white rounded-2xl p-8 text-gray-800 shadow-xl">
+                        <h3 className="text-2xl font-bold mb-6">Demande d'information</h3>
+                        <form onSubmit={handleSubmit}>
+                            <div className="grid md:grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <Label htmlFor="contactName" className="block mb-2">Nom *</Label>
+                                    <Input type="text" id="contactName" required value={formData.contactName} onChange={handleInputChange} />
+                                </div>
+                                <div>
+                                    <Label htmlFor="contactPhone" className="block mb-2">Téléphone *</Label>
+                                    <Input type="tel" id="contactPhone" required value={formData.contactPhone} onChange={handleInputChange} />
+                                </div>
+                            </div>
+                            <div className="mb-4">
+                                <Label htmlFor="contactEmail" className="block mb-2">Email *</Label>
+                                <Input type="email" id="contactEmail" required value={formData.contactEmail} onChange={handleInputChange} />
+                            </div>
+                            <div className="mb-4">
+                                <Label htmlFor="contactDepartment" className="block mb-2">Département *</Label>
+                                <Select onValueChange={handleSelectChange} value={formData.contactDepartment}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Sélectionnez votre département" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {DEPARTEMENTS_OPTIONS.map(opt => (
+                                            <SelectItem key={opt.value} value={opt.value} disabled={opt.value === 'placeholder'}>
+                                                {opt.label}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="mb-4">
+                                <Label htmlFor="contactMessage" className="block mb-2">Message</Label>
+                                <Textarea id="contactMessage" rows={4} placeholder="Décrivez votre projet..." value={formData.contactMessage} onChange={handleInputChange} />
+                            </div>
+                            <div className="flex items-center mb-6">
+                                <Checkbox id="contactConsent" checked={formData.contactConsent} onCheckedChange={handleConsentChange} className="mr-3" />
+                                <Label htmlFor="contactConsent" className="text-sm text-gray-600">J'accepte d'être contacté pour recevoir mon devis personnalisé *</Label>
+                            </div>
+                            <Button type="submit" disabled={isLoading} className="w-full bg-blue-600 text-white py-4 rounded-lg font-semibold hover:bg-blue-700 transition duration-300">
+                                {isLoading ? (
+                                    <span className="flex items-center"><span className="loading-spinner mr-2"></span>Envoi en cours...</span>
+                                ) : (
+                                    <span className="flex items-center justify-center"><Mail className="w-5 h-5 mr-2" />Envoyer ma demande</span>
+                                )}
+                            </Button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+};
+
+const GuideSection = () => (
+    <section id="guide" className="py-16 bg-gray-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+                <h2 className="text-3xl font-bold text-gray-800 mb-6">Guide d'achat : Choisir le bon climatiseur en 2025</h2>
+                
+                <div className="space-y-8">
+                    <article className="border-b border-gray-200 pb-6">
+                        <h3 className="text-2xl font-bold text-blue-600 mb-3">Climatiseur Mobile : La Solution Flexible</h3>
+                        <p className="text-gray-700 mb-4">
+                            Le <strong>climatiseur mobile</strong> est idéal pour les locations, les petits espaces ou en solution d'appoint. 
+                            Nos experts vous conseillent sur les meilleurs modèles de <strong>climatiseur portable</strong> adaptés à vos besoins.
+                        </p>
+                        <div className="bg-blue-50 p-4 rounded-lg">
+                            <h4 className="font-bold text-blue-800 mb-2">Avantages du climatiseur mobile :</h4>
+                            <ul className="list-disc list-inside text-blue-700 space-y-1">
+                                <li>Installation facile sans travaux</li>
+                                <li>Idéal pour les locations et appartements</li>
+                                <li>Solution économique pour une pièce</li>
+                                <li>Déplacement facile entre les pièces</li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article className="border-b border-gray-200 pb-6">
+                        <h3 className="text-2xl font-bold text-green-600 mb-3">Climatiseur Réversible : Chauffage et Rafraîchissement</h3>
+                        <p className="text-gray-700 mb-4">
+                            Le <strong>climatiseur réversible</strong> offre le confort toute l'année. 
+                            Notre simulateur calcule les aides disponibles pour l'installation d'un système réversible.
+                        </p>
+                        <div className="grid md:grid-cols-2 gap-4 mt-4">
+                            <div className="bg-green-50 p-4 rounded-lg">
+                                <h4 className="font-bold text-green-800 mb-2 flex items-center"><Check className="w-4 h-4 mr-2" /> Avantages</h4>
+                                <ul className="list-disc list-inside text-green-700 text-sm space-y-1">
+                                    <li>Solution 2-en-1 chauffage/climatisation</li>
+                                    <li>Économies d'énergie importantes</li>
+                                    <li>Éligible aux aides MaPrimeRénov'</li>
+                                    <li>Confort optimal toute l'année</li>
+                                </ul>
+                            </div>
+                            <div className="bg-orange-50 p-4 rounded-lg">
+                                <h4 className="font-bold text-orange-800 mb-2 flex items-center"><Home className="w-4 h-4 mr-2" /> Idéal pour</h4>
+                                <ul className="list-disc list-inside text-orange-700 text-sm space-y-1">
+                                    <li>Maisons individuelles</li>
+                                    <li>Appartements avec terrasse</li>
+                                    <li>Rénovation énergétique</li>
+                                    <li>Remplacement chauffage ancien</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article className="border-b border-gray-200 pb-6">
+                        <h3 className="text-2xl font-bold text-purple-600 mb-3">Climatiseur Split : Performance et Discrétion</h3>
+                        <p className="text-gray-700 mb-4">
+                            Les systèmes <strong>climatiseur split</strong> (monosplit et multisplit) offrent les meilleures performances 
+                            pour le rafraîchissement de votre habitation. Notre calculateur vous aide à choisir entre monosplit et multisplit.
+                        </p>
+                        <div className="grid md:grid-cols-2 gap-6 mt-4">
+                            <div className="text-center">
+                                <div className="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
+                                    <Home className="text-purple-600 w-6 h-6" />
+                                </div>
+                                <h4 className="font-bold text-purple-800">Monosplit</h4>
+                                <p className="text-sm text-gray-600 mt-2">1 unité intérieure + 1 unité extérieure<br/>Parfait pour une pièce</p>
+                            </div>
+                            <div className="text-center">
+                                <div className="bg-indigo-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
+                                    <Building className="text-indigo-600 w-6 h-6" />
+                                </div>
+                                <h4 className="font-bold text-indigo-800">Multisplit</h4>
+                                <p className="text-sm text-gray-600 mt-2">Plusieurs unités intérieures<br/>Idéal pour 2 à 5 pièces</p>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article>
+                        <h3 className="text-2xl font-bold text-red-600 mb-4">Comment choisir son climatiseur ?</h3>
+                        <div className="grid md:grid-cols-2 gap-6">
+                            <div className="space-y-4">
+                                <div className="flex items-start">
+                                    <div className="bg-red-100 p-2 rounded-lg mr-3">
+                                        <Ruler className="text-red-600 w-5 h-5" />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-800">Surface à rafraîchir</h4>
+                                        <p className="text-sm text-gray-600">10-25m² : 9000 BTU | 25-35m² : 12000 BTU | 35-50m² : 18000 BTU</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start">
+                                    <div className="bg-blue-100 p-2 rounded-lg mr-3">
+                                        <Volume2 className="text-blue-600 w-5 h-5" />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-800">Niveau sonore</h4>
+                                        <p className="text-sm text-gray-600">Privilégiez les modèles <strong>climatiseur silencieux</strong> en dessous de 25 dB</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="space-y-4">
+                                <div className="flex items-start">
+                                    <div className="bg-green-100 p-2 rounded-lg mr-3">
+                                        <Bolt className="text-green-600 w-5 h-5" />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-800">Technologie Inverter</h4>
+                                        <p className="text-sm text-gray-600">Les <strong>climatiseurs inverter</strong> permettent jusqu'à 40% d'économie d'énergie</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start">
+                                    <div className="bg-purple-100 p-2 rounded-lg mr-3">
+                                        <Wifi className="text-purple-600 w-5 h-5" />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-800">Connexion intelligente</h4>
+                                        <p className="text-sm text-gray-600">Les <strong>climatiseurs connectés</strong> offrent un contrôle à distance</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+    );
+};
+
+const PrimesSection = () => (
+    <section id="primes" className="py-16 bg-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-3xl font-bold text-center text-gray-800 mb-12">Toutes les aides disponibles en 2025</h2>
+            
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl shadow-lg p-6 border border-blue-200">
+                    <Home className="text-blue-600 w-8 h-8 mb-4" />
+                    <h3 className="text-xl font-bold mb-3">MaPrimeRénov'</h3>
+                    <p className="text-gray-600 mb-4">Aide de l'État pour l'installation de pompes à chaleur air-air.</p>
+                    <div className="space-y-2 text-sm">
+                        <div className="flex justify-between"><span>Revenus très modestes:</span><span className="font-semibold text-green-600">Jusqu'à 4000€</span></div>
+                        <div className="flex justify-between"><span>Revenus modestes:</span><span className="font-semibold text-green-600">Jusqu'à 3000€</span></div>
+                        <div className="flex justify-between"><span>Revenus intermédiaires:</span><span className="font-semibold text-green-600">Jusqu'à 2000€</span></div>
+                    </div>
+                </div>
+
+                <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl shadow-lg p-6 border border-green-200">
+                    <Leaf className="text-green-600 w-8 h-8 mb-4" />
+                    <h3 className="text-xl font-bold mb-3">Prime CEE</h3>
+                    <p className="text-gray-600 mb-4">Certificats d'Économies d'Énergie versés par les fournisseurs d'énergie.</p>
+                    <div className="space-y-2 text-sm">
+                        <div className="flex justify-between"><span>Montant moyen:</span><span className="font-semibold text-green-600">200€ à 800€</span></div>
+                        <div className="text-xs text-gray-500 mt-2">Cumulable avec MaPrimeRénov'</div>
+                    </div>
+                </div>
+
+                <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl shadow-lg p-6 border border-purple-200">
+                    <Percent className="text-purple-600 w-8 h-8 mb-4" />
+                    <h3 className="text-xl font-bold mb-3">TVA à 10%</h3>
+                    <p className="text-gray-600 mb-4">Taux de TVA réduit pour les travaux d'amélioration énergétique.</p>
+                    <div className="space-y-2 text-sm">
+                        <div className="flex justify-between"><span>Au lieu de 20%:</span><span className="font-semibold text-green-600">TVA à 10%</span></div>
+                        <div className="text-xs text-gray-500 mt-2">Logement de plus de 2 ans</div>
+                    </div>
+                </div>
+
+                <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl shadow-lg p-6 border border-orange-200">
+                    <University className="text-orange-600 w-8 h-8 mb-4" />
+                    <h3 className="text-xl font-bold mb-3">Éco-PTZ</h3>
+                    <p className="text-gray-600 mb-4">Prêt à taux zéro pour financer vos travaux de rénovation énergétique.</p>
+                    <div className="space-y-2 text-sm">
+                        <div className="flex justify-between"><span>Montant max:</span><span className="font-semibold text-green-600">Jusqu'à 15000€</span></div>
+                        <div className="text-xs text-gray-500 mt-2">Remboursement sur 15 ans</div>
+                    </div>
+                </div>
+
+                <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-xl shadow-lg p-6 border border-red-200">
+                    <MapPinIcon className="text-red-600 w-8 h-8 mb-4" />
+                    <h3 className="text-xl font-bold mb-3">Aides locales</h3>
+                    <p className="text-gray-600 mb-4">Subventions des collectivités territoriales (région, département, commune).</p>
+                    <div className="space-y-2 text-sm">
+                        <div className="flex justify-between"><span>Variable selon région:</span><span className="font-semibold text-green-600">500€ à 2000€</span></div>
+                        <div className="text-xs text-gray-500 mt-2">Consultez votre mairie</div>
+                    </div>
+                </div>
+
+                <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-xl shadow-lg p-6 border border-yellow-200">
+                    <Ticket className="text-yellow-600 w-8 h-8 mb-4" />
+                    <h3 className="text-xl font-bold mb-3">Chèque énergie</h3>
+                    <p className="text-gray-600 mb-4">Aide pour payer les factures d'énergie ou financer des travaux.</p>
+                    <div className="space-y-2 text-sm">
+                        <div className="flex justify-between"><span>Montant annuel:</span><span className="font-semibold text-green-600">48€ à 277€</span></div>
+                        <div className="text-xs text-gray-500 mt-2">Selon revenus du foyer</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+);
+
 const QuickContactModal = ({ isOpen, onClose, calculationData }: { isOpen: boolean, onClose: () => void, calculationData: CalculationData | null }) => {
     const { sendData, isLoading } = useDataSender();
     const [formData, setFormData] = useState({
@@ -1692,6 +2070,7 @@ const Footer = () => {
         </footer>
     );
 };
+
 
 // --- Composant Principal ---
 
