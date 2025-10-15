@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { MadeWithDyad } from "@/components/made-with-dyad";
 import { cn } from "@/lib/utils";
 import { ChevronDown, Check, ArrowRight, ArrowLeft, Calculator, Bolt, Info, Euro, Gift, Download, Shield, Phone, Mail, MapPin, Clock, Home, Building, Wind, Ruler, Volume2, Wifi, Percent, University, MapPin as MapPinIcon, Ticket, Leaf, User } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"; // <-- Importation de Button
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -19,6 +19,25 @@ import { showSuccess, showError, showLoading, dismissToast } from "@/utils/toast
 const DEPARTEMENTS_OPTIONS = [
     { value: "placeholder", label: "Sélectionnez votre département" },
     { value: "01", label: "01 - Ain" }, { value: "02", label: "02 - Aisne" }, { value: "03", label: "03 - Allier" }, { value: "04", label: "04 - Alpes-de-Haute-Provence" }, { value: "05", label: "05 - Hautes-Alpes" }, { value: "06", label: "06 - Alpes-Maritimes" }, { value: "07", label: "07 - Ardèche" }, { value: "08", label: "08 - Ardennes" }, { value: "09", label: "09 - Ariège" }, { value: "10", label: "10 - Aube" }, { value: "11", label: "11 - Aude" }, { value: "12", label: "12 - Aveyron" }, { value: "13", label: "13 - Bouches-du-Rhône" }, { value: "14", label: "14 - Calvados" }, { value: "15", label: "15 - Cantal" }, { value: "16", label: "16 - Charente" }, { value: "17", label: "17 - Charente-Maritime" }, { value: "18", label: "18 - Cher" }, { value: "19", label: "19 - Corrèze" }, { value: "21", label: "21 - Côte-d'Or" }, { value: "22", label: "22 - Côtes-d'Armor" }, { value: "23", label: "23 - Creuse" }, { value: "24", label: "24 - Dordogne" }, { value: "25", label: "25 - Doubs" }, { value: "26", label: "26 - Drôme" }, { value: "27", label: "27 - Eure" }, { value: "28", label: "28 - Eure-et-Loir" }, { value: "29", label: "29 - Finistère" }, { value: "2A", label: "2A - Corse-du-Sud" }, { value: "2B", label: "2B - Haute-Corse" }, { value: "30", label: "30 - Gard" }, { value: "31", label: "31 - Haute-Garonne" }, { value: "32", label: "32 - Gers" }, { value: "33", label: "33 - Gironde" }, { value: "34", label: "34 - Hérault" }, { value: "35", label: "35 - Ille-et-Vilaine" }, { value: "36", label: "36 - Indre" }, { value: "37", label: "37 - Indre-et-Loire" }, { value: "38", label: "38 - Isère" }, { value: "39", label: "39 - Jura" }, { value: "40", label: "40 - Landes" }, { value: "41", label: "41 - Loir-et-Cher" }, { value: "42", label: "42 - Loire" }, { value: "43", label: "43 - Haute-Loire" }, { value: "44", label: "44 - Loire-Atlantique" }, { value: "45", label: "45 - Loiret" }, { value: "46", label: "46 - Lot" }, { value: "47", label: "47 - Lot-et-Garonne" }, { value: "48", label: "48 - Lozère" }, { value: "49", label: "49 - Maine-et-Loire" }, { value: "50", label: "50 - Manche" }, { value: "51", label: "51 - Marne" }, { value: "52", label: "52 - Haute-Marne" }, { value: "53", label: "53 - Mayenne" }, { value: "54", label: "54 - Meurthe-et-Moselle" }, { value: "55", label: "55 - Meuse" }, { value: "56", label: "56 - Morbihan" }, { value: "57", label: "57 - Moselle" }, { value: "58", label: "58 - Nièvre" }, { value: "59", label: "59 - Nord" }, { value: "60", label: "60 - Oise" }, { value: "61", label: "61 - Orne" }, { value: "62", label: "62 - Pas-de-Calais" }, { value: "63", label: "63 - Puy-de-Dôme" }, { value: "64", label: "64 - Pyrénées-Atlantiques" }, { value: "65", label: "65 - Hautes-Pyrénées" }, { value: "66", label: "66 - Pyrénées-Orientales" }, { value: "67", label: "67 - Bas-Rhin" }, { value: "68", label: "68 - Haut-Rhin" }, { value: "69", label: "69 - Rhône" }, { value: "70", label: "70 - Haute-Saône" }, { value: "71", label: "71 - Saône-et-Loire" }, { value: "72", label: "72 - Sarthe" }, { value: "73", label: "73 - Savoie" }, { value: "74", label: "74 - Haute-Savoie" }, { value: "75", label: "75 - Paris" }, { value: "76", label: "76 - Seine-Maritime" }, { value: "77", label: "77 - Seine-et-Marne" }, { value: "78", label: "78 - Yvelines" }, { value: "79", label: "79 - Deux-Sèvres" }, { value: "80", label: "80 - Somme" }, { value: "81", label: "81 - Tarn" }, { value: "82", label: "82 - Tarn-et-Garonne" }, { value: "83", label: "83 - Var" }, { value: "84", label: "84 - Vaucluse" }, { value: "85", label: "85 - Vendée" }, { value: "86", label: "86 - Vienne" }, { value: "87", label: "87 - Haute-Vienne" }, { value: "88", label: "88 - Vosges" }, { value: "89", label: "89 - Yonne" }, { value: "90", label: "90 - Territoire de Belfort" }, { value: "91", label: "91 - Essonne" }, { value: "92", label: "92 - Hauts-de-Seine" }, { value: "93", label: "93 - Seine-Saint-Denis" }, { value: "94", label: "94 - Val-de-Marne" }, { value: "95", label: "95 - Val-d'Oise" }, { value: "971", label: "971 - Guadeloupe" }, { value: "972", label: "972 - Martinique" }, { value: "973", label: "973 - Guyane" }, { value: "974", label: "974 - La Réunion" }, { value: "976", label: "976 - Mayotte" }
+];
+
+const FAQ_DATA = [
+    {
+        question: "Quelle est la durée d'installation moyenne ?",
+        answer: "L'installation d'un climatiseur monosplit prend généralement 1 journée. Pour un multisplit, comptez 1 à 2 jours selon le nombre d'unités. Les systèmes gainables nécessitent 2 à 3 jours de travail.",
+    },
+    {
+        question: "Les aides sont-elles cumulables ?",
+        answer: "Oui, la plupart des aides sont cumulables : MaPrimeRénov' + Prime CEE + TVA réduite. L'Éco-PTZ peut également être combiné avec les autres aides pour financer le reste à charge.",
+    },
+    {
+        question: "Faut-il une autorisation pour installer un climatiseur ?",
+        answer: "En maison individuelle, aucune autorisation n'est nécessaire. En copropriété, il faut vérifier le règlement et parfois obtenir l'accord du syndic. Nous vous accompagnons dans ces démarches.",
+    },
+    {
+        question: "Quelles sont les conditions exactes pour l'éco-PTZ ?",
+        answer: "L'éco-PTZ est accessible pour les logements construits avant 1990, en résidence principale, pour les propriétaires occupants ou bailleurs. Il faut réaliser un bouquet de travaux (au moins 2 actions) et faire appel à un professionnel RGE.",
+    },
 ];
 
 // --- Types ---
@@ -1405,6 +1424,278 @@ const QuickContactModal = ({ isOpen, onClose, calculationData }: { isOpen: boole
         </Dialog>
     );
 };
+
+// --- Composants de contenu (pour le SEO) ---
+
+const AvantagesSection = () => (
+    <section className="py-12 bg-white border-b border-gray-100">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid md:grid-cols-3 gap-8">
+                <div className="text-center">
+                    <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Euro className="text-blue-600 w-8 h-8" />
+                    </div>
+                    <h3 className="text-lg font-bold mb-2">Économies garanties</h3>
+                    <p className="text-gray-600">Jusqu'à 70% d'économies grâce aux aides de l'État</p>
+                </div>
+                <div className="text-center">
+                    <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Bolt className="text-green-600 w-8 h-8" />
+                    </div>
+                    <h3 className="text-lg font-bold mb-2">Installation rapide</h3>
+                    <p className="text-gray-600">Intervention sous 48h partout en France</p>
+                </div>
+                <div className="text-center">
+                    <div className="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Shield className="text-purple-600 w-8 h-8" />
+                    </div>
+                    <h3 className="text-lg font-bold mb-2">Garantie 5 ans</h3>
+                    <p className="text-gray-600">Maintenance et SAV inclus pendant 5 ans</p>
+                </div>
+            </div>
+        </div>
+    </section>
+);
+
+const WhyChooseUsSection = () => (
+    <section className="py-16 bg-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-3xl font-bold text-center text-gray-800 mb-12">Pourquoi choisir Climatiseur.pro ?</h2>
+            
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div className="text-center">
+                    <div className="bg-blue-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Calculator className="text-blue-600 w-8 h-8" />
+                    </div>
+                    <h3 className="text-xl font-bold mb-3">Simulateur intelligent</h3>
+                    <p className="text-gray-600">Notre algorithme calcule précisément vos aides et économies</p>
+                </div>
+                
+                <div className="text-center">
+                    <div className="bg-green-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Gift className="text-green-600 w-8 h-8" />
+                    </div>
+                    <h3 className="text-xl font-bold mb-3">Aides optimisées</h3>
+                    <p className="text-gray-600">Nous maximisons vos aides jusqu'à 70% d'économies</p>
+                </div>
+                
+                <div className="text-center">
+                    <div className="bg-purple-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <User className="text-purple-600 w-8 h-8" />
+                    </div>
+                    <h3 className="text-xl font-bold mb-3">Expert dédié</h3>
+                    <p className="text-gray-600">Un conseiller vous accompagne de A à Z</p>
+                </div>
+                
+                <div className="text-center">
+                    <div className="bg-orange-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Shield className="text-orange-600 w-8 h-8" />
+                    </div>
+                    <h3 className="text-xl font-bold mb-3">Garantie totale</h3>
+                    <p className="text-gray-600">Installation et matériel garantis 5 ans</p>
+                </div>
+            </div>
+        </div>
+    </section>
+);
+
+const GuideSection = () => (
+    <section id="guide" className="py-16 bg-gray-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="bg-white rounded-2xl shadow-lg p-8">
+                <h2 className="text-3xl font-bold text-gray-800 mb-6">Guide d'achat : Choisir le bon climatiseur en 2025</h2>
+                
+                <div className="space-y-8">
+                    <article className="border-b border-gray-200 pb-6">
+                        <h3 className="text-2xl font-bold text-blue-600 mb-3">Climatiseur Mobile : La Solution Flexible</h3>
+                        <p className="text-gray-700 mb-4">
+                            Le <strong>climatiseur mobile</strong> est idéal pour les locations, les petits espaces ou en solution d'appoint. 
+                            Nos experts vous conseillent sur les meilleurs modèles de <strong>climatiseur portable</strong> adaptés à vos besoins.
+                        </p>
+                        <div className="bg-blue-50 p-4 rounded-lg">
+                            <h4 className="font-bold text-blue-800 mb-2">Avantages du climatiseur mobile :</h4>
+                            <ul className="list-disc list-inside text-blue-700 space-y-1">
+                                <li>Installation facile sans travaux</li>
+                                <li>Idéal pour les locations et appartements</li>
+                                <li>Solution économique pour une pièce</li>
+                                <li>Déplacement facile entre les pièces</li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article className="border-b border-gray-200 pb-6">
+                        <h3 className="text-2xl font-bold text-green-600 mb-3">Climatiseur Réversible : Chauffage et Rafraîchissement</h3>
+                        <p className="text-gray-700 mb-4">
+                            Le <strong>climatiseur réversible</strong> offre le confort toute l'année. 
+                            Notre simulateur calcule les aides disponibles pour l'installation d'un système réversible.
+                        </p>
+                        <div className="grid md:grid-cols-2 gap-4 mt-4">
+                            <div className="bg-green-50 p-4 rounded-lg">
+                                <h4 className="font-bold text-green-800 mb-2 flex items-center"><Check className="w-4 h-4 mr-2" /> Avantages</h4>
+                                <ul className="list-disc list-inside text-green-700 text-sm space-y-1">
+                                    <li>Solution 2-en-1 chauffage/climatisation</li>
+                                    <li>Économies d'énergie importantes</li>
+                                    <li>Éligible aux aides MaPrimeRénov'</li>
+                                    <li>Confort optimal toute l'année</li>
+                                </ul>
+                            </div>
+                            <div className="bg-orange-50 p-4 rounded-lg">
+                                <h4 className="font-bold text-orange-800 mb-2 flex items-center"><Home className="w-4 h-4 mr-2" /> Idéal pour</h4>
+                                <ul className="list-disc list-inside text-orange-700 text-sm space-y-1">
+                                    <li>Maisons individuelles</li>
+                                    <li>Appartements avec terrasse</li>
+                                    <li>Rénovation énergétique</li>
+                                    <li>Remplacement chauffage ancien</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article className="border-b border-gray-200 pb-6">
+                        <h3 className="text-2xl font-bold text-purple-600 mb-3">Climatiseur Split : Performance et Discrétion</h3>
+                        <p className="text-gray-700 mb-4">
+                            Les systèmes <strong>climatiseur split</strong> (monosplit et multisplit) offrent les meilleures performances 
+                            pour le rafraîchissement de votre habitation. Notre calculateur vous aide à choisir entre monosplit et multisplit.
+                        </p>
+                        <div className="grid md:grid-cols-2 gap-6 mt-4">
+                            <div className="text-center">
+                                <div className="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
+                                    <Home className="text-purple-600 w-6 h-6" />
+                                </div>
+                                <h4 className="font-bold text-purple-800">Monosplit</h4>
+                                <p className="text-sm text-gray-600 mt-2">1 unité intérieure + 1 unité extérieure<br/>Parfait pour une pièce</p>
+                            </div>
+                            <div className="text-center">
+                                <div className="bg-indigo-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
+                                    <Building className="text-indigo-600 w-6 h-6" />
+                                </div>
+                                <h4 className="font-bold text-indigo-800">Multisplit</h4>
+                                <p className="text-sm text-gray-600 mt-2">Plusieurs unités intérieures<br/>Idéal pour 2 à 5 pièces</p>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article>
+                        <h3 className="text-2xl font-bold text-red-600 mb-4">Comment choisir son climatiseur ?</h3>
+                        <div className="grid md:grid-cols-2 gap-6">
+                            <div className="space-y-4">
+                                <div className="flex items-start">
+                                    <div className="bg-red-100 p-2 rounded-lg mr-3">
+                                        <Ruler className="text-red-600 w-5 h-5" />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-800">Surface à rafraîchir</h4>
+                                        <p className="text-sm text-gray-600">10-25m² : 9000 BTU | 25-35m² : 12000 BTU | 35-50m² : 18000 BTU</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start">
+                                    <div className="bg-blue-100 p-2 rounded-lg mr-3">
+                                        <Volume2 className="text-blue-600 w-5 h-5" />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-800">Niveau sonore</h4>
+                                        <p className="text-sm text-gray-600">Privilégiez les modèles <strong>climatiseur silencieux</strong> en dessous de 25 dB</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="space-y-4">
+                                <div className="flex items-start">
+                                    <div className="bg-green-100 p-2 rounded-lg mr-3">
+                                        <Bolt className="text-green-600 w-5 h-5" />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-800">Technologie Inverter</h4>
+                                        <p className="text-sm text-gray-600">Les <strong>climatiseurs inverter</strong> permettent jusqu'à 40% d'économie d'énergie</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start">
+                                    <div className="bg-purple-100 p-2 rounded-lg mr-3">
+                                        <Wifi className="text-purple-600 w-5 h-5" />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-800">Connexion intelligente</h4>
+                                        <p className="text-sm text-gray-600">Les <strong>climatiseurs connectés</strong> offrent un contrôle à distance</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </section>
+);
+
+const PrimesSection = () => (
+    <section id="primes" className="py-16 bg-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-3xl font-bold text-center text-gray-800 mb-12">Toutes les aides disponibles en 2025</h2>
+            
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl shadow-lg p-6 border border-blue-200">
+                    <Home className="text-blue-600 w-8 h-8 mb-4" />
+                    <h3 className="text-xl font-bold mb-3">MaPrimeRénov'</h3>
+                    <p className="text-gray-600 mb-4">Aide de l'État pour l'installation de pompes à chaleur air-air.</p>
+                    <div className="space-y-2 text-sm">
+                        <div className="flex justify-between"><span>Revenus très modestes:</span><span className="font-semibold text-green-600">Jusqu'à 4000€</span></div>
+                        <div className="flex justify-between"><span>Revenus modestes:</span><span className="font-semibold text-green-600">Jusqu'à 3000€</span></div>
+                        <div className="flex justify-between"><span>Revenus intermédiaires:</span><span className="font-semibold text-green-600">Jusqu'à 2000€</span></div>
+                    </div>
+                </div>
+
+                <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl shadow-lg p-6 border border-green-200">
+                    <Leaf className="text-green-600 w-8 h-8 mb-4" />
+                    <h3 className="text-xl font-bold mb-3">Prime CEE</h3>
+                    <p className="text-gray-600 mb-4">Certificats d'Économies d'Énergie versés par les fournisseurs d'énergie.</p>
+                    <div className="space-y-2 text-sm">
+                        <div className="flex justify-between"><span>Montant moyen:</span><span className="font-semibold text-green-600">200€ à 800€</span></div>
+                        <div className="text-xs text-gray-500 mt-2">Cumulable avec MaPrimeRénov'</div>
+                    </div>
+                </div>
+
+                <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl shadow-lg p-6 border border-purple-200">
+                    <Percent className="text-purple-600 w-8 h-8 mb-4" />
+                    <h3 className="text-xl font-bold mb-3">TVA à 10%</h3>
+                    <p className="text-gray-600 mb-4">Taux de TVA réduit pour les travaux d'amélioration énergétique.</p>
+                    <div className="space-y-2 text-sm">
+                        <div className="flex justify-between"><span>Au lieu de 20%:</span><span className="font-semibold text-green-600">TVA à 10%</span></div>
+                        <div className="text-xs text-gray-500 mt-2">Logement de plus de 2 ans</div>
+                    </div>
+                </div>
+
+                <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl shadow-lg p-6 border border-orange-200">
+                    <University className="text-orange-600 w-8 h-8 mb-4" />
+                    <h3 className="text-xl font-bold mb-3">Éco-PTZ</h3>
+                    <p className="text-gray-600 mb-4">Prêt à taux zéro pour financer vos travaux de rénovation énergétique.</p>
+                    <div className="space-y-2 text-sm">
+                        <div className="flex justify-between"><span>Montant max:</span><span className="font-semibold text-green-600">Jusqu'à 15000€</span></div>
+                        <div className="text-xs text-gray-500 mt-2">Remboursement sur 15 ans</div>
+                    </div>
+                </div>
+
+                <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-xl shadow-lg p-6 border border-red-200">
+                    <MapPinIcon className="text-red-600 w-8 h-8 mb-4" />
+                    <h3 className="text-xl font-bold mb-3">Aides locales</h3>
+                    <p className="text-gray-600 mb-4">Subventions des collectivités territoriales (région, département, commune).</p>
+                    <div className="space-y-2 text-sm">
+                        <div className="flex justify-between"><span>Variable selon région:</span><span className="font-semibold text-green-600">500€ à 2000€</span></div>
+                        <div className="text-xs text-gray-500 mt-2">Consultez votre mairie</div>
+                    </div>
+                </div>
+
+                <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-xl shadow-lg p-6 border border-yellow-200">
+                    <Ticket className="text-yellow-600 w-8 h-8 mb-4" />
+                    <h3 className="text-xl font-bold mb-3">Chèque énergie</h3>
+                    <p className="text-gray-600 mb-4">Aide pour payer les factures d'énergie ou financer des travaux.</p>
+                    <div className="space-y-2 text-sm">
+                        <div className="flex justify-between"><span>Montant annuel:</span><span className="font-semibold text-green-600">48€ à 277€</span></div>
+                        <div className="text-xs text-gray-500 mt-2">Selon revenus du foyer</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+);
 
 // --- Composant Principal ---
 
