@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { MadeWithDyad } from "@/components/made-with-dyad";
 import { cn } from "@/lib/utils";
-import { ChevronDown, Check, ArrowRight, ArrowLeft, Calculator, Bolt, Info, Euro, Gift, Download, Shield, Phone, Mail, MapPin, Clock, Home, Building, Wind, Ruler, Volume2, Wifi, Percent, University, MapPin as MapPinIcon, Ticket, Leaf, User } from "lucide-react";
+import { ChevronDown, Check, ArrowRight, ArrowLeft, Calculator, Bolt, Info, Euro, Gift, Download, Shield, Phone, Mail, MapPin, Clock, Home, Building, Wind, Ruler, Volume2, Wifi, Percent, University, MapPin as MapPinIcon, Ticket, Leaf, User, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -17,7 +17,7 @@ import { showSuccess, showError, showLoading, dismissToast } from "@/utils/toast
 // --- Constantes et Mappings ---
 
 const DEPARTEMENTS_OPTIONS = [
-    { value: "placeholder", label: "Sélectionnez votre département" }, // CHANGEMENT: Utilisation de 'placeholder' au lieu de ""
+    { value: "placeholder", label: "Sélectionnez votre département" },
     { value: "01", label: "01 - Ain" }, { value: "02", label: "02 - Aisne" }, { value: "03", label: "03 - Allier" }, { value: "04", label: "04 - Alpes-de-Haute-Provence" }, { value: "05", label: "05 - Hautes-Alpes" }, { value: "06", label: "06 - Alpes-Maritimes" }, { value: "07", label: "07 - Ardèche" }, { value: "08", label: "08 - Ardennes" }, { value: "09", label: "09 - Ariège" }, { value: "10", label: "10 - Aube" }, { value: "11", label: "11 - Aude" }, { value: "12", label: "12 - Aveyron" }, { value: "13", label: "13 - Bouches-du-Rhône" }, { value: "14", label: "14 - Calvados" }, { value: "15", label: "15 - Cantal" }, { value: "16", label: "16 - Charente" }, { value: "17", label: "17 - Charente-Maritime" }, { value: "18", label: "18 - Cher" }, { value: "19", label: "19 - Corrèze" }, { value: "21", label: "21 - Côte-d'Or" }, { value: "22", label: "22 - Côtes-d'Armor" }, { value: "23", label: "23 - Creuse" }, { value: "24", label: "24 - Dordogne" }, { value: "25", label: "25 - Doubs" }, { value: "26", label: "26 - Drôme" }, { value: "27", label: "27 - Eure" }, { value: "28", label: "28 - Eure-et-Loir" }, { value: "29", label: "29 - Finistère" }, { value: "2A", label: "2A - Corse-du-Sud" }, { value: "2B", label: "2B - Haute-Corse" }, { value: "30", label: "30 - Gard" }, { value: "31", label: "31 - Haute-Garonne" }, { value: "32", label: "32 - Gers" }, { value: "33", label: "33 - Gironde" }, { value: "34", label: "34 - Hérault" }, { value: "35", label: "35 - Ille-et-Vilaine" }, { value: "36", label: "36 - Indre" }, { value: "37", label: "37 - Indre-et-Loire" }, { value: "38", label: "38 - Isère" }, { value: "39", label: "39 - Jura" }, { value: "40", label: "40 - Landes" }, { value: "41", label: "41 - Loir-et-Cher" }, { value: "42", label: "42 - Loire" }, { value: "43", label: "43 - Haute-Loire" }, { value: "44", label: "44 - Loire-Atlantique" }, { value: "45", label: "45 - Loiret" }, { value: "46", label: "46 - Lot" }, { value: "47", label: "47 - Lot-et-Garonne" }, { value: "48", label: "48 - Lozère" }, { value: "49", label: "49 - Maine-et-Loire" }, { value: "50", label: "50 - Manche" }, { value: "51", label: "51 - Marne" }, { value: "52", label: "52 - Haute-Marne" }, { value: "53", label: "53 - Mayenne" }, { value: "54", label: "54 - Meurthe-et-Moselle" }, { value: "55", label: "55 - Meuse" }, { value: "56", label: "56 - Morbihan" }, { value: "57", label: "57 - Moselle" }, { value: "58", label: "58 - Nièvre" }, { value: "59", label: "59 - Nord" }, { value: "60", label: "60 - Oise" }, { value: "61", label: "61 - Orne" }, { value: "62", label: "62 - Pas-de-Calais" }, { value: "63", label: "63 - Puy-de-Dôme" }, { value: "64", label: "64 - Pyrénées-Atlantiques" }, { value: "65", label: "65 - Hautes-Pyrénées" }, { value: "66", label: "66 - Pyrénées-Orientales" }, { value: "67", label: "67 - Bas-Rhin" }, { value: "68", label: "68 - Haut-Rhin" }, { value: "69", label: "69 - Rhône" }, { value: "70", label: "70 - Haute-Saône" }, { value: "71", label: "71 - Saône-et-Loire" }, { value: "72", label: "72 - Sarthe" }, { value: "73", label: "73 - Savoie" }, { value: "74", label: "74 - Haute-Savoie" }, { value: "75", label: "75 - Paris" }, { value: "76", label: "76 - Seine-Maritime" }, { value: "77", label: "77 - Seine-et-Marne" }, { value: "78", label: "78 - Yvelines" }, { value: "79", label: "79 - Deux-Sèvres" }, { value: "80", label: "80 - Somme" }, { value: "81", label: "81 - Tarn" }, { value: "82", label: "82 - Tarn-et-Garonne" }, { value: "83", label: "83 - Var" }, { value: "84", label: "84 - Vaucluse" }, { value: "85", label: "85 - Vendée" }, { value: "86", label: "86 - Vienne" }, { value: "87", label: "87 - Haute-Vienne" }, { value: "88", label: "88 - Vosges" }, { value: "89", label: "89 - Yonne" }, { value: "90", label: "90 - Territoire de Belfort" }, { value: "91", label: "91 - Essonne" }, { value: "92", label: "92 - Hauts-de-Seine" }, { value: "93", label: "93 - Seine-Saint-Denis" }, { value: "94", label: "94 - Val-de-Marne" }, { value: "95", label: "95 - Val-d'Oise" }, { value: "971", label: "971 - Guadeloupe" }, { value: "972", label: "972 - Martinique" }, { value: "973", label: "973 - Guyane" }, { value: "974", label: "974 - La Réunion" }, { value: "976", label: "976 - Mayotte" }
 ];
 
@@ -59,6 +59,7 @@ interface CalculationData {
     houseAge: string;
     propertyStatus: string;
     ownerType: string;
+    currentHeating: string; // Ajout du type manquant
     
     // Results
     equipmentCost: number;
@@ -93,59 +94,111 @@ const FloatingButton = ({ onClick }: { onClick: () => void }) => (
     </Button>
 );
 
-const Tooltip = ({ children, text }: { children: React.ReactNode, text: string }) => (
+const Tooltip = ({ text }: { text: string }) => (
     <span className="tooltip ml-1 relative inline-block cursor-pointer">
         <Info className="text-blue-500 w-4 h-4 inline-block" />
         <span className="tooltiptext absolute bottom-[125%] left-1/2 -ml-[100px] w-[200px] bg-gray-800 text-white text-sm text-center rounded-md p-2 opacity-0 transition-opacity duration-300 invisible hover:visible">
             {text}
         </span>
-        {children}
     </span>
 );
 
 const Marquee = () => (
-    <div className="bg-yellow-400 text-blue-900 py-2 overflow-hidden">
+    <div className="bg-blue-900 text-white py-2 overflow-hidden">
         <div className="marquee whitespace-nowrap overflow-hidden box-border">
             <span className="font-semibold inline-block pr-full animate-[marquee_20s_linear_infinite]">
-                🎯 <strong>SPECIAL ÉTÉ 2025</strong> | Installation express sous 48h | 
+                🎯 <strong>DEVIS GRATUIT</strong> | Installation rapide par expert RGE | 
                 💰 <strong>Jusqu'à 70% d'économies</strong> avec les aides de l'État | 
                 🌟 <strong>4.8/5</strong> basé sur 1 247 avis clients |
-                ⚡ <strong>Financement 0%</strong> disponible |
                 🏆 <strong>Certifié RGE</strong> - Installation garantie 5 ans
             </span>
         </div>
     </div>
 );
 
+const StepIndicator = ({ step, label, currentStep }: { step: number, label: string, currentStep: number }) => {
+    const isActive = currentStep === step;
+    const isCompleted = currentStep > step;
+    
+    return (
+        <div className="flex flex-col items-center">
+            <div className={cn(
+                "w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg shadow-lg border-2 border-white transition-all duration-300",
+                isCompleted ? "bg-green-500 text-white" : isActive ? "bg-blue-500 text-white animate-pulse" : "bg-gray-300 text-gray-600"
+            )}>
+                {isCompleted ? <Check className="w-6 h-6" /> : step}
+            </div>
+            <span className="text-xs mt-2 text-gray-600 font-medium">{label}</span>
+        </div>
+    );
+};
+
+const InstallationCard = ({ type, icon: Icon, title, description, price, details, selectedInstallationType, setSelectedInstallationType }: { type: string, icon: React.ElementType, title: string, description: string, price: string, details: string[], selectedInstallationType: string, setSelectedInstallationType: (type: string) => void }) => (
+    <div 
+        className={cn(
+            "installation-type border-2 border-gray-200 rounded-2xl p-4 sm:p-6 cursor-pointer hover:border-blue-500 hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white relative overflow-hidden group",
+            selectedInstallationType === type && "type-selected border-blue-600 shadow-2xl shadow-blue-200/50"
+        )}
+        onClick={() => setSelectedInstallationType(type)}
+    >
+        <div className="text-center relative z-10">
+            <div className={cn(
+                "w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-md transition-colors duration-300",
+                type === 'monosplit' ? 'bg-blue-100 group-hover:bg-blue-200' :
+                type === 'multisplit' ? 'bg-green-100 group-hover:bg-green-200' :
+                'bg-purple-100 group-hover:bg-purple-200'
+            )}>
+                <Icon className={cn("w-6 h-6 sm:text-2xl", type === 'monosplit' ? 'text-blue-600' : type === 'multisplit' ? 'text-green-600' : 'text-purple-600')} />
+            </div>
+            <h3 className="text-base sm:text-lg font-bold mb-1 sm:mb-2">{title}</h3>
+            <p className="text-gray-600 text-xs sm:text-sm mb-2 sm:mb-3">{description}</p>
+            <div className={cn(
+                "text-white px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-xs sm:text-sm font-semibold inline-block mb-2",
+                type === 'monosplit' ? 'bg-blue-600' : type === 'multisplit' ? 'bg-green-600' : 'bg-purple-600'
+            )}>{price}</div>
+            <div className="mt-1 text-xs text-gray-500 flex flex-col space-y-0.5 hidden sm:flex">
+                {details.map((detail, index) => <div key={index}>{detail}</div>)}
+            </div>
+        </div>
+        {(type === 'monosplit' || type === 'gainable') && (
+            <div className={cn(
+                "absolute top-2 left-2 text-white text-xs px-2 py-0.5 rounded-full font-semibold",
+                type === 'monosplit' ? 'bg-blue-500' : 'bg-purple-500'
+            )}>
+                {type === 'monosplit' ? 'Le plus choisi' : 'Premium'}
+            </div>
+        )}
+    </div>
+);
+
+// --- Composants de Section ---
+
 const Header = ({ scrollToSection }: { scrollToSection: (id: string) => void }) => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     return (
-        <nav className="bg-white shadow-lg fixed w-full top-0 z-50">
+        <nav className="bg-white shadow-md fixed w-full top-0 z-50 border-b border-gray-100">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-16">
                     <div className="flex items-center">
                         <Bolt className="text-blue-600 w-6 h-6 mr-2" />
-                        <span className="text-xl font-bold text-gray-800">Climatiseur.pro</span>
-                        <span className="ml-2 bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full hidden md:inline">Certifié RGE</span>
+                        <span className="text-xl font-extrabold text-gray-900">Climatiseur.<span className="text-blue-600">pro</span></span>
                     </div>
-                    <div className="hidden md:flex space-x-8">
+                    <div className="hidden md:flex space-x-8 items-center">
                         {["calculateur", "primes", "guide", "avis", "faq", "contact"].map(id => (
-                            <a key={id} href={`#${id}`} onClick={() => scrollToSection(id)} className="text-gray-700 hover:text-blue-600 transition duration-300 font-medium capitalize">
-                                {id === 'primes' ? 'Primes 2025' : id === 'guide' ? "Guide d'achat" : id === 'avis' ? "Avis Clients" : id}
+                            <a key={id} href={`#${id}`} onClick={() => scrollToSection(id)} className="text-gray-700 hover:text-blue-600 transition duration-300 font-medium capitalize text-sm">
+                                {id === 'primes' ? 'Aides & Primes' : id === 'guide' ? "Guide d'achat" : id === 'avis' ? "Avis Clients" : id}
                             </a>
                         ))}
+                        <Button variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50 transition duration-300">
+                            <Phone className="w-4 h-4 mr-2" />
+                            01 23 45 67 89
+                        </Button>
                     </div>
-                    <div className="flex items-center space-x-4">
-                        <div className="hidden md:flex items-center text-sm text-gray-600">
-                            <Phone className="text-blue-500 w-4 h-4 mr-1" />
-                            <span>01 23 45 67 89</span>
-                        </div>
-                        <div className="md:hidden">
-                            <Button variant="ghost" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-gray-700">
-                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={isMobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}></path></svg>
-                            </Button>
-                        </div>
+                    <div className="flex items-center space-x-4 md:hidden">
+                        <Button variant="ghost" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-gray-700">
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={isMobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}></path></svg>
+                        </Button>
                     </div>
                 </div>
             </div>
@@ -154,7 +207,7 @@ const Header = ({ scrollToSection }: { scrollToSection: (id: string) => void }) 
                     <div className="px-4 py-4 space-y-4">
                         {["calculateur", "primes", "guide", "avis", "faq", "contact"].map(id => (
                             <a key={id} href={`#${id}`} onClick={() => { scrollToSection(id); setIsMobileMenuOpen(false); }} className="block text-gray-700 hover:text-blue-600 transition duration-300 font-medium py-2 border-b border-gray-100 capitalize">
-                                {id === 'primes' ? 'Primes 2025' : id === 'guide' ? "Guide d'achat" : id === 'avis' ? "Avis Clients" : id}
+                                {id === 'primes' ? 'Aides & Primes' : id === 'guide' ? "Guide d'achat" : id === 'avis' ? "Avis Clients" : id}
                             </a>
                         ))}
                         <div className="pt-4 border-t border-gray-200">
@@ -162,7 +215,6 @@ const Header = ({ scrollToSection }: { scrollToSection: (id: string) => void }) 
                                 <Phone className="text-blue-500 w-4 h-4 mr-2" />
                                 <span className="font-medium">01 23 45 67 89</span>
                             </div>
-                            <p className="text-sm text-gray-500 mt-1">Lun-Ven: 8h-19h • Sam: 9h-17h</p>
                         </div>
                     </div>
                 </div>
@@ -201,74 +253,70 @@ const HeroSection = ({ scrollToSection }: { scrollToSection: (id: string) => voi
     }, []);
 
     return (
-        <section className="hero-gradient text-white pt-20 pb-12">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <div className="text-center">
-                    <div className="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
-                        <Shield className="text-yellow-300 w-4 h-4 mr-2" />
-                        <span className="text-sm font-medium">Plus de 15 000 devis calculés en 2025</span>
-                    </div>
-                    
-                    <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-                        Climatiseur Mobile, Réversible, Split<br />
-                        <span className="text-3xl md:text-4xl text-yellow-300">Simulateur Aides 2025 + Devis Gratuit</span>
-                    </h1>
-                    <p className="text-xl md:text-2xl mb-8 text-blue-100 max-w-4xl mx-auto leading-relaxed">
-                        🎯 <strong>Climatiseur pas cher</strong> avec aides • 🔧 Installation professionnelle • 
-                        🌬️ Modèles <strong>silencieux</strong> et <strong>inverter</strong> • 📱 <strong>Climatiseurs connectés</strong>
-                    </p>
-                    
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto mb-8 relative z-10">
-                        <div className="text-center bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                            <div className="text-2xl md:text-3xl font-bold text-yellow-300 stats-counter">{stats.calculated.toLocaleString()}</div>
-                            <div className="text-sm text-blue-200">Devis calculés</div>
+        <section className="bg-gray-50 pt-24 pb-16">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="grid lg:grid-cols-2 gap-12 items-center">
+                    {/* Colonne de gauche: Titre et CTA */}
+                    <div>
+                        <div className="inline-flex items-center bg-blue-100 text-blue-800 rounded-full px-4 py-1 mb-4 text-sm font-medium">
+                            <Star className="w-4 h-4 mr-2 fill-blue-600 text-blue-600" />
+                            Aides 2025 mises à jour
                         </div>
-                        <div className="text-center bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                            <div className="text-2xl md:text-3xl font-bold text-yellow-300">4.8★</div>
-                            <div className="text-sm text-blue-200">Note moyenne</div>
-                        </div>
-                        <div className="text-center bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                            <div className="text-2xl md:text-3xl font-bold text-yellow-300 stats-counter">{stats.satisfied.toLocaleString()}</div>
-                            <div className="text-sm text-blue-200">Clients satisfaits</div>
-                        </div>
-                        <div className="text-center bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                            <div className="text-2xl md:text-3xl font-bold text-yellow-300">2025</div>
-                            <div className="text-sm text-blue-200">Aides à jour</div>
-                        </div>
-                    </div>
-
-                    <div className="flex flex-wrap justify-center gap-4 mb-8">
-                        {["Devis gratuit", "Sans engagement", "Expert RGE", "Garantie 5 ans"].map(text => (
-                            <div key={text} className="flex items-center bg-white/10 backdrop-blur-sm rounded-full px-4 py-2">
-                                <Check className="text-green-300 w-4 h-4 mr-2" />
-                                <span className="text-sm">{text}</span>
-                            </div>
-                        ))}
-                    </div>
-
-                    <div className="flex justify-center">
+                        
+                        <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6 leading-tight">
+                            Simulez vos aides pour l'installation de votre <span className="text-blue-600">Climatisation Réversible</span>
+                        </h1>
+                        <p className="text-xl text-gray-600 mb-8 max-w-xl">
+                            Obtenez une estimation précise du coût de votre projet après déduction des primes de l'État (MaPrimeRénov', CEE, TVA réduite).
+                        </p>
+                        
                         <Button 
                             onClick={() => scrollToSection('calculateur')} 
-                            className="bg-yellow-400 text-blue-900 px-8 py-4 rounded-lg font-bold text-lg hover:bg-yellow-300 transition duration-300 transform hover:scale-105 shadow-lg group relative overflow-hidden w-full sm:w-auto text-center"
+                            className="bg-blue-600 text-white px-8 py-6 rounded-lg font-bold text-lg hover:bg-blue-700 transition duration-300 transform hover:scale-[1.02] shadow-xl shadow-blue-200/50"
                         >
-                            <div className="absolute inset-0 w-3 bg-blue-600 transform -skew-x-12 -translate-x-10 group-hover:translate-x-96 transition-transform duration-700"></div>
-                            <Bolt className="mr-2 relative z-10 w-5 h-5" />
-                            <span className="relative z-10">Simuler mon projet GRATUITEMENT</span>
+                            <Calculator className="mr-2 w-5 h-5" />
+                            Lancer ma simulation gratuite
                         </Button>
+                        
+                        <div className="mt-8 flex flex-wrap gap-6 text-gray-600 text-sm">
+                            <div className="flex items-center">
+                                <Check className="w-4 h-4 mr-2 text-green-500" />
+                                <span>Devis gratuit & sans engagement</span>
+                            </div>
+                            <div className="flex items-center">
+                                <Shield className="w-4 h-4 mr-2 text-blue-500" />
+                                <span>Installation par Expert RGE</span>
+                            </div>
+                        </div>
                     </div>
-                    
-                    <div className="mt-8 flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-8 text-blue-200 text-sm">
-                        <div className="flex items-center">
-                            <Shield className="w-4 h-4 mr-2" />
-                            <span>100% sécurisé et confidentiel</span>
-                        </div>
-                        <div className="flex items-center">
-                            <Clock className="w-4 h-4 mr-2" />
-                            <span>Réponse sous 24h</span>
-                        </div>
-                        <div className="flex items-center">
-                            <Check className="w-4 h-4 mr-2" />
-                            <span>Expert dédié</span>
+
+                    {/* Colonne de droite: Statistiques et visuel (simplifié) */}
+                    <div className="hidden lg:block relative">
+                        <div className="bg-white rounded-3xl p-8 shadow-2xl border border-gray-100">
+                            <h3 className="text-2xl font-bold text-gray-800 mb-6">Nos garanties</h3>
+                            <div className="space-y-6">
+                                <div className="flex items-start">
+                                    <Bolt className="w-6 h-6 text-blue-600 mr-4 mt-1 flex-shrink-0" />
+                                    <div>
+                                        <p className="font-semibold text-gray-900">Intervention Rapide</p>
+                                        <p className="text-gray-600 text-sm">Installation possible sous 48h selon disponibilité.</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start">
+                                    <Euro className="w-6 h-6 text-green-600 mr-4 mt-1 flex-shrink-0" />
+                                    <div>
+                                        <p className="font-semibold text-gray-900">Aides Maximisées</p>
+                                        <p className="text-gray-600 text-sm">Jusqu'à 70% d'économies sur le coût total du projet.</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start">
+                                    <User className="w-6 h-6 text-purple-600 mr-4 mt-1 flex-shrink-0" />
+                                    <div>
+                                        <p className="font-semibold text-gray-900">Expertise RGE</p>
+                                        <p className="text-gray-600 text-sm">Seuls les professionnels RGE garantissent l'accès aux aides.</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -276,6 +324,78 @@ const HeroSection = ({ scrollToSection }: { scrollToSection: (id: string) => voi
         </section>
     );
 };
+
+const AvantagesSection = () => (
+    <section className="py-12 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid md:grid-cols-3 gap-8">
+                <div className="text-center p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition duration-300">
+                    <div className="bg-blue-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Euro className="text-blue-600 w-8 h-8" />
+                    </div>
+                    <h3 className="text-lg font-bold mb-2 text-gray-800">Économies garanties</h3>
+                    <p className="text-gray-600 text-sm">Jusqu'à 70% d'économies grâce aux aides de l'État</p>
+                </div>
+                <div className="text-center p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition duration-300">
+                    <div className="bg-green-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Bolt className="text-green-600 w-8 h-8" />
+                    </div>
+                    <h3 className="text-lg font-bold mb-2 text-gray-800">Installation rapide</h3>
+                    <p className="text-gray-600 text-sm">Intervention sous 48h partout en France</p>
+                </div>
+                <div className="text-center p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition duration-300">
+                    <div className="bg-purple-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Shield className="text-purple-600 w-8 h-8" />
+                    </div>
+                    <h3 className="text-lg font-bold mb-2 text-gray-800">Garantie 5 ans</h3>
+                    <p className="text-gray-600 text-sm">Maintenance et SAV inclus pendant 5 ans</p>
+                </div>
+            </div>
+        </div>
+    </section>
+);
+
+const WhyChooseUsSection = () => (
+    <section className="py-16 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-3xl font-bold text-center text-gray-800 mb-12">Nos engagements qualité</h2>
+            
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div className="text-center p-6 bg-white rounded-xl shadow-lg border border-gray-100">
+                    <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Calculator className="text-blue-600 w-7 h-7" />
+                    </div>
+                    <h3 className="text-xl font-bold mb-3 text-gray-800">Simulateur précis</h3>
+                    <p className="text-gray-600 text-sm">Notre algorithme calcule précisément vos aides et économies</p>
+                </div>
+                
+                <div className="text-center p-6 bg-white rounded-xl shadow-lg border border-gray-100">
+                    <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Gift className="text-green-600 w-7 h-7" />
+                    </div>
+                    <h3 className="text-xl font-bold mb-3 text-gray-800">Aides optimisées</h3>
+                    <p className="text-gray-600 text-sm">Nous maximisons vos aides jusqu'à 70% d'économies</p>
+                </div>
+                
+                <div className="text-center p-6 bg-white rounded-xl shadow-lg border border-gray-100">
+                    <div className="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <User className="text-purple-600 w-7 h-7" />
+                    </div>
+                    <h3 className="text-xl font-bold mb-3 text-gray-800">Expert dédié</h3>
+                    <p className="text-gray-600 text-sm">Un conseiller vous accompagne de A à Z</p>
+                </div>
+                
+                <div className="text-center p-6 bg-white rounded-xl shadow-lg border border-gray-100">
+                    <div className="bg-orange-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Shield className="text-orange-600 w-7 h-7" />
+                    </div>
+                    <h3 className="text-xl font-bold mb-3 text-gray-800">Garantie totale</h3>
+                    <p className="text-gray-600 text-sm">Installation et matériel garantis 5 ans</p>
+                </div>
+            </div>
+        </div>
+    </section>
+);
 
 const CalculatorSection = ({ 
     currentStep, 
@@ -298,7 +418,7 @@ const CalculatorSection = ({
         housingType: "maison",
         constructionYear: "moyen",
         insulation: "bonne",
-        department: "placeholder", // CHANGEMENT: Initialisation à 'placeholder'
+        department: "placeholder",
         reversible: true,
         wifi: false,
         inverter: true,
@@ -308,10 +428,11 @@ const CalculatorSection = ({
         houseAge: "moins15",
         propertyStatus: "residence_principale",
         ownerType: "occupant",
+        currentHeating: "electrique",
     });
     const [errors, setErrors] = useState({ surface: "", department: "", income: "" });
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { id, value, type } = e.target;
         setFormData(prev => ({
             ...prev,
@@ -349,7 +470,7 @@ const CalculatorSection = ({
                 isValid = false;
             }
         } else if (step === 2) {
-            if (!formData.department || formData.department === 'placeholder') { // CHANGEMENT: Vérification de 'placeholder'
+            if (!formData.department || formData.department === 'placeholder') {
                 newErrors.department = 'Veuillez sélectionner votre département';
                 isValid = false;
             }
@@ -495,7 +616,7 @@ const CalculatorSection = ({
                 totalAides: Math.round(totalAides),
                 finalCost: Math.round(finalCost),
                 savings: Math.round(savings),
-                eligibleEcoPTZ: eligibleEcoPTZ
+                eligibleEcoPTZ: eligibleForEcoPTZ
             };
 
             setCalculationData(results);
@@ -505,61 +626,6 @@ const CalculatorSection = ({
     };
 
     const progressPercentage = ((currentStep - 1) / 2) * 100;
-
-    const StepIndicator = ({ step, label }: { step: number, label: string }) => {
-        const isActive = currentStep === step;
-        const isCompleted = currentStep > step;
-        
-        return (
-            <div className="flex flex-col items-center">
-                <div className={cn(
-                    "w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg shadow-lg border-2 border-white transition-all duration-300",
-                    isCompleted ? "bg-green-500 text-white" : isActive ? "bg-blue-500 text-white" : "bg-gray-300 text-gray-600"
-                )}>
-                    {isCompleted ? <Check className="w-6 h-6" /> : step}
-                </div>
-                <span className="text-xs mt-2 text-gray-600 font-medium">{label}</span>
-            </div>
-        );
-    };
-
-    const InstallationCard = ({ type, icon: Icon, title, description, price, details }: { type: string, icon: React.ElementType, title: string, description: string, price: string, details: string[] }) => (
-        <div 
-            className={cn(
-                "installation-type border-2 border-gray-200 rounded-2xl p-6 cursor-pointer hover:border-blue-500 hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white relative overflow-hidden group",
-                selectedInstallationType === type && "type-selected border-blue-600 shadow-2xl shadow-blue-200/50"
-            )}
-            onClick={() => setSelectedInstallationType(type)}
-        >
-            <div className="text-center relative z-10">
-                <div className={cn(
-                    "w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md transition-colors duration-300",
-                    type === 'monosplit' ? 'bg-blue-100 group-hover:bg-blue-200' :
-                    type === 'multisplit' ? 'bg-green-100 group-hover:bg-green-200' :
-                    'bg-purple-100 group-hover:bg-purple-200'
-                )}>
-                    <Icon className={cn("text-2xl", type === 'monosplit' ? 'text-blue-600' : type === 'multisplit' ? 'text-green-600' : 'text-purple-600')} />
-                </div>
-                <h3 className="text-lg font-bold mb-2">{title}</h3>
-                <p className="text-gray-600 text-sm mb-3">{description}</p>
-                <div className={cn(
-                    "text-white px-3 py-1 rounded-full text-sm font-semibold inline-block mb-2",
-                    type === 'monosplit' ? 'bg-blue-600' : type === 'multisplit' ? 'bg-green-600' : 'bg-purple-600'
-                )}>{price}</div>
-                <div className="mt-2 text-xs text-gray-500 flex flex-col space-y-1">
-                    {details.map((detail, index) => <div key={index}>{detail}</div>)}
-                </div>
-            </div>
-            {(type === 'monosplit' || type === 'gainable') && (
-                <div className={cn(
-                    "absolute top-4 left-4 text-white text-xs px-2 py-1 rounded-full font-semibold",
-                    type === 'monosplit' ? 'bg-blue-500' : 'bg-purple-500'
-                )}>
-                    {type === 'monosplit' ? 'Le plus choisi' : 'Premium'}
-                </div>
-            )}
-        </div>
-    );
 
     return (
         <section id="calculateur" className="py-16 bg-gray-50">
@@ -573,15 +639,15 @@ const CalculatorSection = ({
                 {/* Indicateur d'étapes amélioré avec progression */}
                 <div className="flex justify-center mb-12">
                     <div className="flex items-center space-x-4">
-                        <StepIndicator step={1} label="Installation" />
-                        <div className="w-20 h-2 bg-gray-200 rounded-full mt-[-20px] relative">
+                        <StepIndicator step={1} label="Installation" currentStep={currentStep} />
+                        <div className="w-20 h-2 bg-gray-200 rounded-full mt-[-20px] relative hidden sm:block">
                             <div className="h-full bg-blue-500 rounded-full transition-all duration-500" style={{ width: currentStep > 1 ? '100%' : '0%' }}></div>
                         </div>
-                        <StepIndicator step={2} label="Logement" />
-                        <div className="w-20 h-2 bg-gray-200 rounded-full mt-[-20px] relative">
+                        <StepIndicator step={2} label="Logement" currentStep={currentStep} />
+                        <div className="w-20 h-2 bg-gray-200 rounded-full mt-[-20px] relative hidden sm:block">
                             <div className="h-full bg-blue-500 rounded-full transition-all duration-500" style={{ width: currentStep > 2 ? '100%' : '0%' }}></div>
                         </div>
-                        <StepIndicator step={3} label="Aides" />
+                        <StepIndicator step={3} label="Aides" currentStep={currentStep} />
                     </div>
                 </div>
 
@@ -597,15 +663,16 @@ const CalculatorSection = ({
                     </div>
                 </div>
 
-                <div className="bg-white rounded-3xl shadow-2xl p-8 border border-gray-100 relative overflow-hidden calculator-card">
+                <div className="bg-white rounded-3xl shadow-2xl p-4 sm:p-8 border border-gray-100 relative overflow-hidden calculator-card">
                     {/* Étape 1: Type d'installation améliorée */}
                     <div id="step1" className={cn("step-content", currentStep !== 1 && "hidden")}>
                         <div className="text-center mb-8">
-                            <h2 className="text-2xl font-bold text-gray-800 mb-2">Étape 1: Type d'installation</h2>
-                            <p className="text-gray-600">Sélectionnez le type de climatisation qui correspond à vos besoins</p>
+                            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">Étape 1: Type d'installation</h2>
+                            <p className="text-gray-600 text-sm sm:text-base">Sélectionnez le type de climatisation qui correspond à vos besoins</p>
                         </div>
                         
-                        <div className="grid md:grid-cols-3 gap-6 mb-8">
+                        {/* Amélioration mobile: Utilisation de grid-cols-1 sur mobile, puis md:grid-cols-3 */}
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-8">
                             <InstallationCard 
                                 type="monosplit" 
                                 icon={Home} 
@@ -613,6 +680,8 @@ const CalculatorSection = ({
                                 description="Une unité intérieure + une unité extérieure" 
                                 price="À partir de 1290€" 
                                 details={["⭐ Idéal pour 1 pièce", "⚡ Puissance: 2.5 à 3.5 kW", "🏠 Surface: 10 à 35 m²"]}
+                                selectedInstallationType={selectedInstallationType}
+                                setSelectedInstallationType={setSelectedInstallationType}
                             />
                             <InstallationCard 
                                 type="multisplit" 
@@ -621,6 +690,8 @@ const CalculatorSection = ({
                                 description="Plusieurs unités intérieures + une unité extérieure" 
                                 price="À partir de 2490€" 
                                 details={["🏠 Idéal pour 2-5 pièces", "⚡ Puissance: 5 à 10 kW", "📏 Surface: 35 à 100 m²"]}
+                                selectedInstallationType={selectedInstallationType}
+                                setSelectedInstallationType={setSelectedInstallationType}
                             />
                             <InstallationCard 
                                 type="gainable" 
@@ -629,12 +700,14 @@ const CalculatorSection = ({
                                 description="Système discret intégré dans les combles" 
                                 price="À partir de 3990€" 
                                 details={["✨ Solution haut de gamme", "⚡ Puissance: 8 à 18 kW", "🏰 Surface: 80 à 200 m²"]}
+                                selectedInstallationType={selectedInstallationType}
+                                setSelectedInstallationType={setSelectedInstallationType}
                             />
                         </div>
 
                         <div className="grid md:grid-cols-2 gap-6">
                             <div>
-                                <Label htmlFor="surface" className="flex items-center mb-2">
+                                <Label htmlFor="surface" className="flex items-center mb-2 text-sm">
                                     Surface à climatiser (m²) <span className="text-red-500 ml-1">*</span>
                                     <Tooltip text="Surface totale des pièces à climatiser. Pour une estimation précise, mesurez chaque pièce." />
                                 </Label>
@@ -649,13 +722,13 @@ const CalculatorSection = ({
                                     required
                                     className={cn(errors.surface && "invalid-field")}
                                 />
-                                {errors.surface && <p className="error-message">{errors.surface}</p>}
+                                {errors.surface && <p className="error-message text-xs text-red-500 mt-1">{errors.surface}</p>}
                                 <div className="text-xs text-gray-500 mt-1">
                                     <span>10m² minimum</span> - <span>500m² maximum</span>
                                 </div>
                             </div>
                             <div>
-                                <Label htmlFor="rooms" className="block mb-2">Nombre de pièces à climatiser</Label>
+                                <Label htmlFor="rooms" className="block mb-2 text-sm">Nombre de pièces à climatiser</Label>
                                 <Select onValueChange={(value) => handleSelectChange('rooms', value)} value={formData.rooms.toString()}>
                                     <SelectTrigger>
                                         <SelectValue placeholder="Sélectionnez le nombre de pièces" />
@@ -675,13 +748,13 @@ const CalculatorSection = ({
                     {/* Étape 2: Caractéristiques améliorée */}
                     <div id="step2" className={cn("step-content", currentStep !== 2 && "hidden")}>
                         <div className="text-center mb-8">
-                            <h2 className="text-2xl font-bold text-gray-800 mb-2">Étape 2: Caractéristiques du logement</h2>
-                            <p className="text-gray-600">Ces informations nous aident à affiner votre estimation</p>
+                            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">Étape 2: Caractéristiques du logement</h2>
+                            <p className="text-gray-600 text-sm sm:text-base">Ces informations nous aident à affiner votre estimation</p>
                         </div>
                         
                         <div className="grid md:grid-cols-2 gap-6 mb-6">
                             <div>
-                                <Label htmlFor="housingType" className="block mb-2">Type de logement</Label>
+                                <Label htmlFor="housingType" className="block mb-2 text-sm">Type de logement</Label>
                                 <Select onValueChange={(value) => handleSelectChange('housingType', value)} value={formData.housingType}>
                                     <SelectTrigger><SelectValue /></SelectTrigger>
                                     <SelectContent>
@@ -691,7 +764,7 @@ const CalculatorSection = ({
                                 </Select>
                             </div>
                             <div>
-                                <Label htmlFor="constructionYear" className="block mb-2">Année de construction</Label>
+                                <Label htmlFor="constructionYear" className="block mb-2 text-sm">Année de construction</Label>
                                 <Select onValueChange={(value) => handleSelectChange('constructionYear', value)} value={formData.constructionYear}>
                                     <SelectTrigger><SelectValue /></SelectTrigger>
                                     <SelectContent>
@@ -705,7 +778,7 @@ const CalculatorSection = ({
 
                         <div className="grid md:grid-cols-2 gap-6 mb-6">
                             <div>
-                                <Label htmlFor="insulation" className="flex items-center mb-2">
+                                <Label htmlFor="insulation" className="flex items-center mb-2 text-sm">
                                     Isolation
                                     <Tooltip text="Qualité de l'isolation de votre logement. Influence la puissance nécessaire." />
                                 </Label>
@@ -720,7 +793,7 @@ const CalculatorSection = ({
                                 </Select>
                             </div>
                             <div>
-                                <Label htmlFor="department" className="block mb-2">Département <span className="text-red-500">*</span></Label>
+                                <Label htmlFor="department" className="block mb-2 text-sm">Département <span className="text-red-500">*</span></Label>
                                 <Select onValueChange={(value) => handleSelectChange('department', value)} value={formData.department}>
                                     <SelectTrigger className={cn(errors.department && "invalid-field")}>
                                         <SelectValue placeholder="Sélectionnez votre département" />
@@ -733,7 +806,7 @@ const CalculatorSection = ({
                                         ))}
                                     </SelectContent>
                                 </Select>
-                                {errors.department && <p className="error-message">{errors.department}</p>}
+                                {errors.department && <p className="error-message text-xs text-red-500 mt-1">{errors.department}</p>}
                             </div>
                         </div>
 
@@ -747,7 +820,7 @@ const CalculatorSection = ({
                                         onCheckedChange={(checked) => handleCheckboxChange('reversible', !!checked)} 
                                         className="mr-3"
                                     />
-                                    <Label htmlFor="reversible">Climatisation réversible (chaud/froid)</Label>
+                                    <Label htmlFor="reversible" className="text-sm">Climatisation réversible (chaud/froid)</Label>
                                 </div>
                                 <div className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-blue-50 transition duration-300 cursor-pointer">
                                     <Checkbox 
@@ -756,7 +829,7 @@ const CalculatorSection = ({
                                         onCheckedChange={(checked) => handleCheckboxChange('wifi', !!checked)} 
                                         className="mr-3"
                                     />
-                                    <Label htmlFor="wifi">Contrôle WiFi</Label>
+                                    <Label htmlFor="wifi" className="text-sm">Contrôle WiFi</Label>
                                 </div>
                                 <div className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-blue-50 transition duration-300 cursor-pointer">
                                     <Checkbox 
@@ -765,7 +838,7 @@ const CalculatorSection = ({
                                         onCheckedChange={(checked) => handleCheckboxChange('inverter', !!checked)} 
                                         className="mr-3"
                                     />
-                                    <Label htmlFor="inverter">Technologie Inverter</Label>
+                                    <Label htmlFor="inverter" className="text-sm">Technologie Inverter</Label>
                                 </div>
                                 <div className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-blue-50 transition duration-300 cursor-pointer">
                                     <Checkbox 
@@ -774,7 +847,7 @@ const CalculatorSection = ({
                                         onCheckedChange={(checked) => handleCheckboxChange('installation', !!checked)} 
                                         className="mr-3"
                                     />
-                                    <Label htmlFor="installation">Installation par professionnel RGE</Label>
+                                    <Label htmlFor="installation" className="text-sm">Installation par professionnel RGE</Label>
                                 </div>
                             </div>
                         </div>
@@ -783,13 +856,13 @@ const CalculatorSection = ({
                     {/* Étape 3: Situation financière améliorée */}
                     <div id="step3" className={cn("step-content", currentStep !== 3 && "hidden")}>
                         <div className="text-center mb-8">
-                            <h2 className="text-2xl font-bold text-gray-800 mb-2">Étape 3: Éligibilité aux aides</h2>
-                            <p className="text-gray-600">Ces informations déterminent votre éligibilité aux aides financières</p>
+                            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">Étape 3: Éligibilité aux aides</h2>
+                            <p className="text-gray-600 text-sm sm:text-base">Ces informations déterminent votre éligibilité aux aides financières</p>
                         </div>
                         
                         <div className="grid md:grid-cols-2 gap-6 mb-6">
                             <div>
-                                <Label htmlFor="income" className="flex items-center mb-2">
+                                <Label htmlFor="income" className="flex items-center mb-2 text-sm">
                                     Revenu fiscal de référence (€) <span className="text-red-500 ml-1">*</span>
                                     <Tooltip text="Montant indiqué sur votre avis d'imposition. Détermine le montant des aides." />
                                 </Label>
@@ -802,10 +875,10 @@ const CalculatorSection = ({
                                     required
                                     className={cn(errors.income && "invalid-field")}
                                 />
-                                {errors.income && <p className="error-message">{errors.income}</p>}
+                                {errors.income && <p className="error-message text-xs text-red-500 mt-1">{errors.income}</p>}
                             </div>
                             <div>
-                                <Label htmlFor="householdSize" className="block mb-2">Nombre de personnes dans le foyer</Label>
+                                <Label htmlFor="householdSize" className="block mb-2 text-sm">Nombre de personnes dans le foyer</Label>
                                 <Select onValueChange={(value) => handleSelectChange('householdSize', value)} value={formData.householdSize}>
                                     <SelectTrigger><SelectValue /></SelectTrigger>
                                     <SelectContent>
@@ -821,7 +894,7 @@ const CalculatorSection = ({
 
                         <div className="grid md:grid-cols-2 gap-6 mb-6">
                             <div>
-                                <Label htmlFor="houseAge" className="block mb-2">Âge du logement</Label>
+                                <Label htmlFor="houseAge" className="block mb-2 text-sm">Âge du logement</Label>
                                 <Select onValueChange={(value) => handleSelectChange('houseAge', value)} value={formData.houseAge}>
                                     <SelectTrigger><SelectValue /></SelectTrigger>
                                     <SelectContent>
@@ -831,7 +904,7 @@ const CalculatorSection = ({
                                 </Select>
                             </div>
                             <div>
-                                <Label htmlFor="currentHeating" className="block mb-2">Système de chauffage actuel</Label>
+                                <Label htmlFor="currentHeating" className="block mb-2 text-sm">Système de chauffage actuel</Label>
                                 <Select onValueChange={(value) => handleSelectChange('currentHeating', value)} value={formData.currentHeating}>
                                     <SelectTrigger><SelectValue /></SelectTrigger>
                                     <SelectContent>
@@ -851,7 +924,7 @@ const CalculatorSection = ({
                             </h3>
                             <div className="grid md:grid-cols-2 gap-4">
                                 <div>
-                                    <Label htmlFor="propertyStatus" className="block mb-2">Statut du logement</Label>
+                                    <Label htmlFor="propertyStatus" className="block mb-2 text-sm">Statut du logement</Label>
                                     <Select onValueChange={(value) => handleSelectChange('propertyStatus', value)} value={formData.propertyStatus}>
                                         <SelectTrigger><SelectValue /></SelectTrigger>
                                         <SelectContent>
@@ -861,7 +934,7 @@ const CalculatorSection = ({
                                     </Select>
                                 </div>
                                 <div>
-                                    <Label htmlFor="ownerType" className="block mb-2">Type de propriétaire</Label>
+                                    <Label htmlFor="ownerType" className="block mb-2 text-sm">Type de propriétaire</Label>
                                     <Select onValueChange={(value) => handleSelectChange('ownerType', value)} value={formData.ownerType}>
                                         <SelectTrigger><SelectValue /></SelectTrigger>
                                         <SelectContent>
@@ -874,7 +947,7 @@ const CalculatorSection = ({
                         </div>
 
                         <div className="text-center">
-                            <Button onClick={calculateEstimate} className="bg-blue-600 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-blue-700 transition duration-300 transform hover:scale-105 shadow-lg">
+                            <Button onClick={calculateEstimate} className="w-full sm:w-auto bg-blue-600 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-blue-700 transition duration-300 transform hover:scale-105 shadow-lg">
                                 <Calculator className="w-5 h-5 mr-2" />Calculer mon devis
                             </Button>
                         </div>
@@ -886,17 +959,17 @@ const CalculatorSection = ({
                             id="prevBtn" 
                             onClick={previousStep} 
                             variant="secondary"
-                            className={cn("px-6 py-3 font-semibold flex items-center", currentStep === 1 && "invisible")}
+                            className={cn("px-4 py-3 sm:px-6 font-semibold flex items-center", currentStep === 1 && "invisible")}
                         >
                             <ArrowLeft className="w-4 h-4 mr-2" />Précédent
                         </Button>
-                        <div className="flex-1 text-center">
+                        <div className="flex-1 text-center hidden sm:block">
                             <div className="text-sm text-gray-500">Étape {currentStep} sur 3</div>
                         </div>
                         <Button 
                             id="nextBtn" 
                             onClick={currentStep === 3 ? calculateEstimate : nextStep} 
-                            className="bg-blue-600 text-white px-6 py-3 font-semibold hover:bg-blue-700 transition duration-300 ml-auto flex items-center group"
+                            className="bg-blue-600 text-white px-4 py-3 sm:px-6 font-semibold hover:bg-blue-700 transition duration-300 ml-auto flex items-center group"
                         >
                             <span>{currentStep === 3 ? "Calculer mon devis" : "Suivant"}</span>
                             {currentStep !== 3 && <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" />}
@@ -930,7 +1003,7 @@ const ResultsSection = ({ data, openContactModal }: { data: CalculationData | nu
                 </div>
                 
                 <div className="grid md:grid-cols-2 gap-8 mb-12">
-                    <div className="bg-red-50 border border-red-200 rounded-2xl p-8 text-center">
+                    <div className="bg-red-50 border border-red-200 rounded-2xl p-8 text-center shadow-lg">
                         <h3 className="text-2xl font-bold text-red-800 mb-4 flex items-center justify-center">
                             <Euro className="w-6 h-6 mr-2" />Avant aides
                         </h3>
@@ -938,7 +1011,7 @@ const ResultsSection = ({ data, openContactModal }: { data: CalculationData | nu
                         <p className="text-red-700">Prix public TTC</p>
                     </div>
                     
-                    <div className="bg-green-50 border border-green-200 rounded-2xl p-8 text-center">
+                    <div className="bg-green-50 border border-green-200 rounded-2xl p-8 text-center shadow-lg">
                         <h3 className="text-2xl font-bold text-green-800 mb-4 flex items-center justify-center">
                             <Gift className="w-6 h-6 mr-2" />Après aides
                         </h3>
@@ -948,7 +1021,7 @@ const ResultsSection = ({ data, openContactModal }: { data: CalculationData | nu
                 </div>
                 
                 <div className="grid md:grid-cols-2 gap-8">
-                    <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-8 border border-blue-200">
+                    <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-8 border border-blue-200 shadow-md">
                         <h3 className="text-2xl font-bold text-blue-800 mb-6 flex items-center">
                             <Euro className="w-6 h-6 mr-2" />Détail du coût d'installation
                         </h3>
@@ -974,14 +1047,14 @@ const ResultsSection = ({ data, openContactModal }: { data: CalculationData | nu
                                 <span>TVA réduite (10%):</span>
                                 <span>{formatCurrency(data.vatCost)}</span>
                             </div>
-                            <div className="flex justify-between text-2xl font-bold text-blue-900 bg-white rounded-lg p-4 mt-4 border border-blue-200">
+                            <div className="flex justify-between text-2xl font-bold text-blue-900 bg-white rounded-lg p-4 mt-4 border border-blue-200 shadow-sm">
                                 <span>Total TTC:</span>
                                 <span>{formatCurrency(data.totalTTC)}</span>
                             </div>
                         </div>
                     </div>
 
-                    <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-8 border border-green-200">
+                    <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-8 border border-green-200 shadow-md">
                         <h3 className="text-2xl font-bold text-green-800 mb-6 flex items-center">
                             <Gift className="w-6 h-6 mr-2" />Détail des aides disponibles
                         </h3>
@@ -997,7 +1070,7 @@ const ResultsSection = ({ data, openContactModal }: { data: CalculationData | nu
                             ))}
                         </div>
                         <hr className="border-green-200 my-6" />
-                        <div className="flex justify-between text-2xl font-bold text-green-900 bg-white rounded-lg p-4 border border-green-200">
+                        <div className="flex justify-between text-2xl font-bold text-green-900 bg-white rounded-lg p-4 border border-green-200 shadow-sm">
                             <span>Total des aides:</span>
                             <span>{formatCurrency(data.totalAides)}</span>
                         </div>
@@ -1005,7 +1078,7 @@ const ResultsSection = ({ data, openContactModal }: { data: CalculationData | nu
                 </div>
 
                 {data.eligibleEcoPTZ && data.ecoPTZ > 0 && (
-                    <div id="pretsSection" className="mt-8 bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl p-8 border border-orange-200">
+                    <div id="pretsSection" className="mt-8 bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl p-8 border border-orange-200 shadow-md">
                         <h3 className="text-2xl font-bold text-orange-800 mb-6 flex items-center">
                             <University className="w-6 h-6 mr-2" />Solutions de financement
                         </h3>
@@ -1021,7 +1094,7 @@ const ResultsSection = ({ data, openContactModal }: { data: CalculationData | nu
                     </div>
                 )}
 
-                <div className="mt-12 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-2xl p-8 text-center relative overflow-hidden">
+                <div className="mt-12 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-2xl p-8 text-center relative overflow-hidden shadow-2xl">
                     <h3 className="text-3xl font-bold mb-6 relative z-10">Votre investissement final</h3>
                     <div className="text-6xl font-bold mb-4 relative z-10">{formatCurrency(data.finalCost)}</div>
                     <p className="text-xl opacity-90 mb-6 relative z-10">Soit une économie de <span className="font-bold text-yellow-300">{formatCurrency(data.savings)}</span></p>
@@ -1069,7 +1142,7 @@ const FAQSection = () => {
                 
                 <div className="space-y-6">
                     {FAQ_DATA.map((item, index) => (
-                        <div key={index} className="bg-white rounded-xl shadow-lg p-6">
+                        <div key={index} className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
                             <button className="flex justify-between items-center w-full text-left" onClick={() => toggleFAQ(index)}>
                                 <h3 className="text-lg font-semibold text-gray-800">{item.question}</h3>
                                 <ChevronDown className={cn("text-blue-600 transition-transform duration-300 w-5 h-5", openIndex === index && "rotate-180")} />
@@ -1091,12 +1164,12 @@ const ContactSection = () => {
         contactName: "",
         contactPhone: "",
         contactEmail: "",
-        contactDepartment: "placeholder", // CHANGEMENT: Initialisation à 'placeholder'
+        contactDepartment: "placeholder",
         contactMessage: "",
         contactConsent: false,
     });
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { id, value } = e.target;
         setFormData(prev => ({ ...prev, [id]: value }));
     };
@@ -1178,7 +1251,7 @@ const ContactSection = () => {
                         </div>
                     </div>
 
-                    <div className="bg-white rounded-2xl p-8 text-gray-800">
+                    <div className="bg-white rounded-2xl p-8 text-gray-800 shadow-xl">
                         <h3 className="text-2xl font-bold mb-6">Demande d'information</h3>
                         <form onSubmit={handleSubmit}>
                             <div className="grid md:grid-cols-2 gap-4 mb-4">
@@ -1233,276 +1306,10 @@ const ContactSection = () => {
     );
 };
 
-const Footer = () => {
-    const showLegalMentions = () => alert('Mentions légales - Climatiseur.pro SAS - RCS Paris 123 456 789 - Capital 50 000€ - Siège social : 123 Avenue de la République, 75011 Paris');
-    const showPrivacyPolicy = () => alert('Politique de confidentialité - Vos données sont protégées conformément au RGPD - Droit d\'accès, rectification, opposition');
-    const showCGV = () => alert('Conditions Générales de Vente - Disponibles sur demande à contact@climatiseur.pro');
-    const showCookiesPolicy = () => alert('Politique Cookies - Nous utilisons des cookies essentiels au fonctionnement du site et des statistiques anonymes');
-
-    return (
-        <footer className="bg-gray-800 text-white py-12">
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="grid md:grid-cols-4 gap-8">
-                    <div>
-                        <div className="flex items-center mb-4">
-                            <Bolt className="text-blue-400 w-6 h-6 mr-2" />
-                            <span className="text-xl font-bold">Climatiseur.pro</span>
-                        </div>
-                        <p className="text-gray-400 mb-4">Votre expert en climatisation et optimisation des aides financières depuis 2020.</p>
-                        <div className="flex space-x-3">
-                            <div className="bg-white rounded-lg p-2">
-                                <div className="text-xs font-bold text-gray-800">RGE</div>
-                            </div>
-                            <div className="bg-white rounded-lg p-2">
-                                <div className="text-xs font-bold text-gray-800">QUALIBAT</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <h4 className="font-bold mb-4 text-lg">Navigation</h4>
-                        <ul className="space-y-2 text-gray-400">
-                            {["calculateur", "primes", "guide", "avis", "faq", "contact"].map(id => (
-                                <li key={id}><a href={`#${id}`} className="hover:text-white transition duration-300 flex items-center"><ArrowRight className="text-blue-400 w-3 h-3 mr-2" />{id.charAt(0).toUpperCase() + id.slice(1)}</a></li>
-                            ))}
-                        </ul>
-                    </div>
-                    
-                    <div>
-                        <h4 className="font-bold mb-4 text-lg">Légal</h4>
-                        <ul className="space-y-2 text-gray-400">
-                            <li><a href="#" onClick={showLegalMentions} className="hover:text-white transition duration-300 flex items-center"><Shield className="text-blue-400 w-3 h-3 mr-2" />Mentions légales</a></li>
-                            <li><a href="#" onClick={showPrivacyPolicy} className="hover:text-white transition duration-300 flex items-center"><Shield className="text-blue-400 w-3 h-3 mr-2" />Confidentialité</a></li>
-                            <li><a href="#" onClick={showCGV} className="hover:text-white transition duration-300 flex items-center"><Shield className="text-blue-400 w-3 h-3 mr-2" />CGV</a></li>
-                            <li><a href="#" onClick={showCookiesPolicy} className="hover:text-white transition duration-300 flex items-center"><Shield className="text-blue-400 w-3 h-3 mr-2" />Cookies</a></li>
-                        </ul>
-                    </div>
-                    
-                    <div>
-                        <h4 className="font-bold mb-4 text-lg">Contact</h4>
-                        <ul className="space-y-3 text-gray-400">
-                            <li className="flex items-center">
-                                <Phone className="text-blue-400 w-4 h-4 mr-3" />
-                                <span>01 23 45 67 89</span>
-                            </li>
-                            <li className="flex items-center">
-                                <Mail className="text-blue-400 w-4 h-4 mr-3" />
-                                <span>contact@climatiseur.pro</span>
-                            </li>
-                            <li className="flex items-center">
-                                <Clock className="text-blue-400 w-4 h-4 mr-3" />
-                                <span>Lun-Ven: 8h-19h<br/>Sam: 9h-17h</span>
-                            </li>
-                            <li className="flex items-center">
-                                <MapPinIcon className="text-blue-400 w-4 h-4 mr-3" />
-                                <span>Intervention France entière</span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                
-                <div className="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
-                    <p>&copy; 2025 Climatiseur.pro - Tous droits réservés | SIRET: 123 456 789 00000 | RCS Paris</p>
-                </div>
-            </div>
-        </footer>
-    );
-};
-
-const QuickContactModal = ({ isOpen, onClose, calculationData }: { isOpen: boolean, onClose: () => void, calculationData: CalculationData | null }) => {
-    const { sendData, isLoading } = useDataSender();
-    const [formData, setFormData] = useState({
-        name: "",
-        phone: "",
-        email: "",
-        department: calculationData?.department || "placeholder", // CHANGEMENT: Initialisation à 'placeholder'
-        consent: false,
-    });
-
-    useEffect(() => {
-        if (calculationData?.department && calculationData.department !== 'placeholder') {
-            setFormData(prev => ({ ...prev, department: calculationData.department }));
-        }
-    }, [calculationData]);
-
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { id, value } = e.target;
-        setFormData(prev => ({ ...prev, [id]: value }));
-    };
-
-    const handleSelectChange = (value: string) => {
-        setFormData(prev => ({ ...prev, department: value }));
-    };
-
-    const handleConsentChange = (checked: boolean) => {
-        setFormData(prev => ({ ...prev, consent: checked }));
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!formData.consent) {
-            showError("Veuillez accepter la politique de confidentialité.");
-            return;
-        }
-        if (formData.department === 'placeholder') {
-            showError("Veuillez sélectionner votre département.");
-            return;
-        }
-
-        const success = await sendData(formData, 'quick', calculationData);
-        if (success) {
-            onClose();
-            setFormData({
-                name: "",
-                phone: "",
-                email: "",
-                department: calculationData?.department || "placeholder",
-                consent: false,
-            });
-        }
-    };
-
-    return (
-        <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[425px] p-8 rounded-2xl">
-                <DialogHeader className="text-center">
-                    <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <User className="text-blue-600 w-8 h-8" />
-                    </div>
-                    <DialogTitle className="text-2xl font-bold text-blue-600">Vos coordonnées</DialogTitle>
-                    <p className="text-gray-600">Pour que nos experts puissent vous contacter</p>
-                </DialogHeader>
-                
-                <form onSubmit={handleSubmit} className="mt-4">
-                    <div className="space-y-4">
-                        <div>
-                            <Label htmlFor="name" className="block mb-2">Nom complet *</Label>
-                            <Input type="text" id="name" required value={formData.name} onChange={handleInputChange} placeholder="Votre nom et prénom" />
-                        </div>
-                        <div>
-                            <Label htmlFor="phone" className="block mb-2">Téléphone *</Label>
-                            <Input type="tel" id="phone" required value={formData.phone} onChange={handleInputChange} placeholder="01 23 45 67 89" />
-                        </div>
-                        <div>
-                            <Label htmlFor="email" className="block mb-2">Email *</Label>
-                            <Input type="email" id="email" required value={formData.email} onChange={handleInputChange} placeholder="votre@email.com" />
-                        </div>
-                        <div>
-                            <Label htmlFor="department" className="block mb-2">Département *</Label>
-                            <Select onValueChange={handleSelectChange} value={formData.department}>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Sélectionnez votre département" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {DEPARTEMENTS_OPTIONS.map(opt => (
-                                        <SelectItem key={opt.value} value={opt.value} disabled={opt.value === 'placeholder'}>
-                                            {opt.label}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
-                        <div className="flex items-start">
-                            <Checkbox id="consent" checked={formData.consent} onCheckedChange={handleConsentChange} className="mr-3 mt-1" />
-                            <Label htmlFor="consent" className="text-sm text-gray-600">J'accepte d'être contacté pour mon projet et j'ai pris connaissance de la <a href="#contact" className="text-blue-600 hover:underline">politique de confidentialité</a> *</Label>
-                        </div>
-                    </div>
-                    
-                    <Button type="submit" disabled={isLoading} className="w-full mt-6 bg-blue-600 text-white py-4 rounded-lg font-semibold hover:bg-blue-700 transition duration-300">
-                        {isLoading ? (
-                            <span className="flex items-center"><span className="loading-spinner mr-2"></span>Envoi en cours...</span>
-                        ) : (
-                            <span className="flex items-center justify-center"><Mail className="w-5 h-5 mr-2" />Envoyer mes coordonnées</span>
-                        )}
-                    </Button>
-                    
-                    <p className="text-xs text-gray-500 mt-4 text-center flex items-center justify-center">
-                        <Shield className="w-4 h-4 mr-1" /> Vos informations sont sécurisées et ne seront pas partagées
-                    </p>
-                </form>
-            </DialogContent>
-        </Dialog>
-    );
-};
-
-// --- Composants de contenu (pour le SEO) ---
-
-const AvantagesSection = () => (
-    <section className="py-12 bg-white border-b border-gray-100">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid md:grid-cols-3 gap-8">
-                <div className="text-center">
-                    <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <Euro className="text-blue-600 w-8 h-8" />
-                    </div>
-                    <h3 className="text-lg font-bold mb-2">Économies garanties</h3>
-                    <p className="text-gray-600">Jusqu'à 70% d'économies grâce aux aides de l'État</p>
-                </div>
-                <div className="text-center">
-                    <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <Bolt className="text-green-600 w-8 h-8" />
-                    </div>
-                    <h3 className="text-lg font-bold mb-2">Installation rapide</h3>
-                    <p className="text-gray-600">Intervention sous 48h partout en France</p>
-                </div>
-                <div className="text-center">
-                    <div className="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <Shield className="text-purple-600 w-8 h-8" />
-                    </div>
-                    <h3 className="text-lg font-bold mb-2">Garantie 5 ans</h3>
-                    <p className="text-gray-600">Maintenance et SAV inclus pendant 5 ans</p>
-                </div>
-            </div>
-        </div>
-    </section>
-);
-
-const WhyChooseUsSection = () => (
-    <section className="py-16 bg-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold text-center text-gray-800 mb-12">Pourquoi choisir Climatiseur.pro ?</h2>
-            
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <div className="text-center">
-                    <div className="bg-blue-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <Calculator className="text-blue-600 w-8 h-8" />
-                    </div>
-                    <h3 className="text-xl font-bold mb-3">Simulateur intelligent</h3>
-                    <p className="text-gray-600">Notre algorithme calcule précisément vos aides et économies</p>
-                </div>
-                
-                <div className="text-center">
-                    <div className="bg-green-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <Gift className="text-green-600 w-8 h-8" />
-                    </div>
-                    <h3 className="text-xl font-bold mb-3">Aides optimisées</h3>
-                    <p className="text-gray-600">Nous maximisons vos aides jusqu'à 70% d'économies</p>
-                </div>
-                
-                <div className="text-center">
-                    <div className="bg-purple-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <User className="text-purple-600 w-8 h-8" />
-                    </div>
-                    <h3 className="text-xl font-bold mb-3">Expert dédié</h3>
-                    <p className="text-gray-600">Un conseiller vous accompagne de A à Z</p>
-                </div>
-                
-                <div className="text-center">
-                    <div className="bg-orange-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <Shield className="text-orange-600 w-8 h-8" />
-                    </div>
-                    <h3 className="text-xl font-bold mb-3">Garantie totale</h3>
-                    <p className="text-gray-600">Installation et matériel garantis 5 ans</p>
-                </div>
-            </div>
-        </div>
-    </section>
-);
-
 const GuideSection = () => (
     <section id="guide" className="py-16 bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="bg-white rounded-2xl shadow-lg p-8">
+            <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
                 <h2 className="text-3xl font-bold text-gray-800 mb-6">Guide d'achat : Choisir le bon climatiseur en 2025</h2>
                 
                 <div className="space-y-8">
@@ -1697,8 +1504,198 @@ const PrimesSection = () => (
     </section>
 );
 
-const User = ({ className }: { className?: string }) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>;
-const Leaf = ({ className }: { className?: string }) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 21 2 22 2s-5.5 3.9-11 18z"/></svg>;
+const QuickContactModal = ({ isOpen, onClose, calculationData }: { isOpen: boolean, onClose: () => void, calculationData: CalculationData | null }) => {
+    const { sendData, isLoading } = useDataSender();
+    const [formData, setFormData] = useState({
+        name: "",
+        phone: "",
+        email: "",
+        department: calculationData?.department || "placeholder",
+        consent: false,
+    });
+
+    useEffect(() => {
+        if (calculationData?.department && calculationData.department !== 'placeholder') {
+            setFormData(prev => ({ ...prev, department: calculationData.department }));
+        }
+    }, [calculationData]);
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { id, value } = e.target;
+        setFormData(prev => ({ ...prev, [id]: value }));
+    };
+
+    const handleSelectChange = (value: string) => {
+        setFormData(prev => ({ ...prev, department: value }));
+    };
+
+    const handleConsentChange = (checked: boolean) => {
+        setFormData(prev => ({ ...prev, consent: checked }));
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!formData.consent) {
+            showError("Veuillez accepter la politique de confidentialité.");
+            return;
+        }
+        if (formData.department === 'placeholder') {
+            showError("Veuillez sélectionner votre département.");
+            return;
+        }
+
+        const success = await sendData(formData, 'quick', calculationData);
+        if (success) {
+            onClose();
+            setFormData({
+                name: "",
+                phone: "",
+                email: "",
+                department: calculationData?.department || "placeholder",
+                consent: false,
+            });
+        }
+    };
+
+    return (
+        <Dialog open={isOpen} onOpenChange={onClose}>
+            <DialogContent className="sm:max-w-[425px] p-8 rounded-2xl">
+                <DialogHeader className="text-center">
+                    <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <User className="text-blue-600 w-8 h-8" />
+                    </div>
+                    <DialogTitle className="text-2xl font-bold text-blue-600">Vos coordonnées</DialogTitle>
+                    <p className="text-gray-600">Pour que nos experts puissent vous contacter</p>
+                </DialogHeader>
+                
+                <form onSubmit={handleSubmit} className="mt-4">
+                    <div className="space-y-4">
+                        <div>
+                            <Label htmlFor="name" className="block mb-2">Nom complet *</Label>
+                            <Input type="text" id="name" required value={formData.name} onChange={handleInputChange} placeholder="Votre nom et prénom" />
+                        </div>
+                        <div>
+                            <Label htmlFor="phone" className="block mb-2">Téléphone *</Label>
+                            <Input type="tel" id="phone" required value={formData.phone} onChange={handleInputChange} placeholder="01 23 45 67 89" />
+                        </div>
+                        <div>
+                            <Label htmlFor="email" className="block mb-2">Email *</Label>
+                            <Input type="email" id="email" required value={formData.email} onChange={handleInputChange} placeholder="votre@email.com" />
+                        </div>
+                        <div>
+                            <Label htmlFor="department" className="block mb-2">Département *</Label>
+                            <Select onValueChange={handleSelectChange} value={formData.department}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Sélectionnez votre département" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {DEPARTEMENTS_OPTIONS.map(opt => (
+                                        <SelectItem key={opt.value} value={opt.value} disabled={opt.value === 'placeholder'}>
+                                            {opt.label}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div className="flex items-start">
+                            <Checkbox id="consent" checked={formData.consent} onCheckedChange={handleConsentChange} className="mr-3 mt-1" />
+                            <Label htmlFor="consent" className="text-sm text-gray-600">J'accepte d'être contacté pour mon projet et j'ai pris connaissance de la <a href="#contact" className="text-blue-600 hover:underline">politique de confidentialité</a> *</Label>
+                        </div>
+                    </div>
+                    
+                    <Button type="submit" disabled={isLoading} className="w-full mt-6 bg-blue-600 text-white py-4 rounded-lg font-semibold hover:bg-blue-700 transition duration-300">
+                        {isLoading ? (
+                            <span className="flex items-center"><span className="loading-spinner mr-2"></span>Envoi en cours...</span>
+                        ) : (
+                            <span className="flex items-center justify-center"><Mail className="w-5 h-5 mr-2" />Envoyer mes coordonnées</span>
+                        )}
+                    </Button>
+                    
+                    <p className="text-xs text-gray-500 mt-4 text-center flex items-center justify-center">
+                        <Shield className="w-4 h-4 mr-1" /> Vos informations sont sécurisées et ne seront pas partagées
+                    </p>
+                </form>
+            </DialogContent>
+        </Dialog>
+    );
+};
+
+const Footer = () => {
+    const showLegalMentions = () => alert('Mentions légales - Climatiseur.pro SAS - RCS Paris 123 456 789 - Capital 50 000€ - Siège social : 123 Avenue de la République, 75011 Paris');
+    const showPrivacyPolicy = () => alert('Politique de confidentialité - Vos données sont protégées conformément au RGPD - Droit d\'accès, rectification, opposition');
+    const showCGV = () => alert('Conditions Générales de Vente - Disponibles sur demande à contact@climatiseur.pro');
+    const showCookiesPolicy = () => alert('Politique Cookies - Nous utilisons des cookies essentiels au fonctionnement du site et des statistiques anonymes');
+
+    return (
+        <footer className="bg-gray-900 text-white py-12">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="grid md:grid-cols-5 gap-8 border-b border-gray-700 pb-8 mb-8">
+                    <div className="md:col-span-2">
+                        <div className="flex items-center mb-4">
+                            <Bolt className="text-blue-400 w-6 h-6 mr-2" />
+                            <span className="text-xl font-extrabold">Climatiseur.<span className="text-blue-400">pro</span></span>
+                        </div>
+                        <p className="text-gray-400 mb-4 text-sm">Votre expert en climatisation et optimisation des aides financières. Certifié RGE.</p>
+                        <div className="flex space-x-3">
+                            <div className="bg-white rounded-lg px-3 py-1">
+                                <div className="text-xs font-bold text-gray-800">RGE</div>
+                            </div>
+                            <div className="bg-white rounded-lg px-3 py-1">
+                                <div className="text-xs font-bold text-gray-800">QUALIBAT</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 className="font-bold mb-4 text-lg text-blue-400">Navigation</h4>
+                        <ul className="space-y-2 text-gray-400 text-sm">
+                            {["calculateur", "primes", "guide", "avis", "faq", "contact"].map(id => (
+                                <li key={id}><a href={`#${id}`} className="hover:text-white transition duration-300">{id.charAt(0).toUpperCase() + id.slice(1)}</a></li>
+                            ))}
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h4 className="font-bold mb-4 text-lg text-blue-400">Légal</h4>
+                        <ul className="space-y-2 text-gray-400 text-sm">
+                            <li><a href="#" onClick={showLegalMentions} className="hover:text-white transition duration-300">Mentions légales</a></li>
+                            <li><a href="#" onClick={showPrivacyPolicy} className="hover:text-white transition duration-300">Confidentialité</a></li>
+                            <li><a href="#" onClick={showCGV} className="hover:text-white transition duration-300">CGV</a></li>
+                            <li><a href="#" onClick={showCookiesPolicy} className="hover:text-white transition duration-300">Cookies</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h4 className="font-bold mb-4 text-lg text-blue-400">Contact</h4>
+                        <ul className="space-y-3 text-gray-400 text-sm">
+                            <li className="flex items-center">
+                                <Phone className="text-blue-400 w-4 h-4 mr-3" />
+                                <span>01 23 45 67 89</span>
+                            </li>
+                            <li className="flex items-center">
+                                <Mail className="text-blue-400 w-4 h-4 mr-3" />
+                                <span>contact@climatiseur.pro</span>
+                            </li >
+                            <li className="flex items-center">
+                                <Clock className="text-blue-400 w-4 h-4 mr-3" />
+                                <span>Lun-Ven: 8h-19h<br/>Sam: 9h-17h</span>
+                            </li>
+                            <li className="flex items-center">
+                                <MapPinIcon className="text-blue-400 w-4 h-4 mr-3" />
+                                <span>Intervention France entière</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div className="text-center text-gray-500 text-xs">
+                    <p>&copy; 2025 Climatiseur.pro - Tous droits réservés | SIRET: 123 456 789 00000 | RCS Paris</p>
+                </div>
+            </div>
+        </footer>
+    );
+};
+
 
 // --- Composant Principal ---
 
@@ -1714,13 +1711,6 @@ const Index = () => {
 
     const openContactModal = () => setIsModalOpen(true);
     const closeContactModal = () => setIsModalOpen(false);
-
-    // Placeholder pour les fonctions légales (comme dans le fichier PHP)
-    const showLegalMentions = () => alert('Mentions légales - Climatiseur.pro SAS - RCS Paris 123 456 789 - Capital 50 000€ - Siège social : 123 Avenue de la République, 75011 Paris');
-    const showPrivacyPolicy = () => alert('Politique de confidentialité - Vos données sont protégées conformément au RGPD - Droit d\'accès, rectification, opposition');
-    const showCGV = () => alert('Conditions Générales de Vente - Disponibles sur demande à contact@climatiseur.pro');
-    const showCookiesPolicy = () => alert('Politique Cookies - Nous utilisons des cookies essentiels au fonctionnement du site et des statistiques anonymes');
-
 
     return (
         <div className="min-h-screen flex flex-col pt-16">
