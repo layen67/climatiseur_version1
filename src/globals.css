@@ -209,6 +209,22 @@
     margin-top: 0.25rem;
 }
 
+/* Animation de clignotement pour l'étape active */
+@keyframes pulse-strong {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+        transform: scale(1.05);
+    }
+}
+
+.animate-pulse-strong {
+    animation: pulse-strong 1.5s infinite cubic-bezier(0.66, 0, 0, 1);
+}
+
 /* Améliorations responsive */
 @media (max-width: 768px) {
     .floating-simulator-btn {
