@@ -13,6 +13,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useDataSender } from "@/hooks/use-data-sender";
 import { showSuccess, showError, showLoading, dismissToast } from "@/utils/toast";
+import { FloatingSimulatorButton } from "@/components/FloatingSimulatorButton";
+import { AppHeader } from "@/components/AppHeader";
 
 // --- Constantes et Mappings ---
 
@@ -79,20 +81,6 @@ interface CalculationData {
 }
 
 // --- Composants réutilisables ---
-
-const FloatingButton = ({ onClick }: { onClick: () => void }) => (
-    <Button
-        id="floatingSimulatorBtn"
-        onClick={onClick}
-        className="floating-simulator-btn bg-blue-600 text-white rounded-full px-6 py-4 shadow-lg hover:bg-blue-700 transition duration-300 flex items-center fixed bottom-8 left-8 z-50 animate-pulse"
-    >
-        <Calculator className="text-xl" />
-        <span className="ml-2 font-semibold hidden sm:inline">Simuler mon projet</span>
-        <div className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">
-            <Bolt size={12} />
-        </div>
-    </Button>
-);
 
 const Tooltip = ({ text }: { text: string }) => (
     <span className="tooltip ml-1 relative inline-block cursor-pointer">
@@ -172,56 +160,6 @@ const InstallationCard = ({ type, icon: Icon, title, description, price, details
 );
 
 // --- Composants de Section ---
-
-const Header = ({ scrollToSection }: { scrollToSection: (id: string) => void }) => {
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-    return (
-        <nav className="bg-white shadow-md fixed w-full top-0 z-50 border-b border-gray-100">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex justify-between items-center h-16">
-                    <div className="flex items-center">
-                        <Bolt className="text-blue-600 w-6 h-6 mr-2" />
-                        <span className="text-xl font-extrabold text-gray-900">Climatiseur.<span className="text-blue-600">pro</span></span>
-                    </div>
-                    <div className="hidden md:flex space-x-8 items-center">
-                        {["calculateur", "primes", "guide", "avis", "faq", "contact"].map(id => (
-                            <a key={id} href={`#${id}`} onClick={() => scrollToSection(id)} className="text-gray-700 hover:text-blue-600 transition duration-300 font-medium capitalize text-sm">
-                                {id === 'primes' ? 'Aides & Primes' : id === 'guide' ? "Guide d'achat" : id === 'avis' ? "Avis Clients" : id}
-                            </a>
-                        ))}
-                        <Button variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50 transition duration-300">
-                            <Phone className="w-4 h-4 mr-2" />
-                            01 23 45 67 89
-                        </Button>
-                    </div>
-                    <div className="flex items-center space-x-4 md:hidden">
-                        <Button variant="ghost" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-gray-700">
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={isMobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}></path></svg>
-                        </Button>
-                    </div>
-                </div>
-            </div>
-            {isMobileMenuOpen && (
-                <div id="mobile-menu" className="md:hidden bg-white shadow-lg w-full top-16 z-40">
-                    <div className="px-4 py-4 space-y-4">
-                        {["calculateur", "primes", "guide", "avis", "faq", "contact"].map(id => (
-                            <a key={id} href={`#${id}`} onClick={() => { scrollToSection(id); setIsMobileMenuOpen(false); }} className="block text-gray-700 hover:text-blue-600 transition duration-300 font-medium py-2 border-b border-gray-100 capitalize">
-                                {id === 'primes' ? 'Aides & Primes' : id === 'guide' ? "Guide d'achat" : id === 'avis' ? "Avis Clients" : id}
-                            </a>
-                        ))}
-                        <div className="pt-4 border-t border-gray-200">
-                            <div className="flex items-center text-gray-700">
-                                <Phone className="text-blue-500 w-4 h-4 mr-2" />
-                                <span className="font-medium">01 23 45 67 89</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-        </nav>
-    );
-};
 
 const HeroSection = ({ scrollToSection }: { scrollToSection: (id: string) => void }) => {
     const [stats, setStats] = useState({ calculated: 0, satisfied: 0 });
@@ -1429,9 +1367,9 @@ const GuideSection = () => (
                     </article>
                 </div>
             </div>
-        </div>
-    </section>
-);
+        </section>
+    );
+};
 
 const PrimesSection = () => (
     <section id="primes" className="py-16 bg-white">
@@ -1715,7 +1653,7 @@ const Index = () => {
     return (
         <div className="min-h-screen flex flex-col pt-16">
             <Marquee />
-            <Header scrollToSection={scrollToSection} />
+            <AppHeader scrollToSection={scrollToSection} />
             
             <main className="flex-grow">
                 <HeroSection scrollToSection={scrollToSection} />
@@ -1740,7 +1678,7 @@ const Index = () => {
 
             <Footer />
             <MadeWithDyad />
-            <FloatingButton onClick={() => scrollToSection('calculateur')} />
+            <FloatingSimulatorButton onClick={() => scrollToSection('calculateur')} />
             <QuickContactModal isOpen={isModalOpen} onClose={closeContactModal} calculationData={calculationData} />
         </div>
     );
